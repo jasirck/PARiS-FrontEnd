@@ -1,7 +1,8 @@
-// Base.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoSearchSharp } from 'react-icons/io5';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux'; // Import Redux hooks
+import { logout } from "../Toolkit/Slice/authSlice";
 import Home from './menu/Home';
 import Packages from './menu/Packages';
 import Holiday from './menu/Holiday';
@@ -9,15 +10,25 @@ import Resort from './menu/Resort';
 import Registration from './Auth/Registration';
 import Login from './Auth/Login';
 import NumberVarify from './Auth/NumberVarify';
+import ForgotPassword from './Auth/ForgotPassword';
 
 function Base() {
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const [isModal, setIsModal] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  // Helper function to check if the current path matches
+  // Redux state for authentication
+  const { user, profile,token } = useSelector((state) => state.auth);
+  
+
   const isActive = (path) => location.pathname === path;
 
+  useEffect(() => {
+    console.log(user,profile,token);
+    
+    console.log(isModal);
+  }, [isModal,]);
 
   return (
     <div className="bg-gray-100 w-full h-full">
@@ -31,13 +42,29 @@ function Base() {
           />
         </section>
         <section className="ml-auto">
-          <button onClick={() => setIsModal('login')} className="bg-[#287094] text-white px-6 py-2 rounded-full hover:bg-[#1e5674] transition duration-200">
-            Sign In
-          </button>
+          {token ? ( // Check if user is logged in
+            <div className="flex items-center space-x-4">
+              <img
+              onClick={() => navigate('/profile')}
+              src={profile ? profile : '/user_image_demo.png'} 
+                alt="User profile"
+                className="w-12 h-12 rounded-full object-cover "
+              />
+              {/* <span className="text-gray-700 font-medium">{user}</span> */}
+              
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsModal('login')}
+              className="bg-[#287094] text-white px-6 py-2 rounded-full hover:bg-[#1e5674] transition duration-200"
+            >
+              Sign In
+            </button>
+          )}
         </section>
       </header>
 
-      {/* Hero Section */}
+      {/* Rest of the component */}
       <section className="relative w-full px-4 sm:px-24 mt-8">
         <img
           className="rounded-3xl w-full max-h-96 object-cover"
@@ -59,57 +86,57 @@ function Base() {
       <nav className="flex justify-center items-center text-gray-700 py-8 mt-6 rounded-lg space-x-8">
         <button
           onClick={() => navigate('/home')}
-          className={`relative group bg-transparent border-none ${isActive('/home') ? 'text-[#287094]' : ''
-            }`}
+          className={`relative group bg-transparent border-none ${isActive('/home') ? 'text-[#287094]' : ''}`}
         >
           <h3 className="text-2xl font-semibold cursor-pointer transition duration-200">
             Home
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'
-              }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
+              isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'
+            }`}
           ></span>
         </button>
 
         <button
           onClick={() => navigate('/home/holiday')}
-          className={`relative group bg-transparent border-none ${isActive('/home/holiday') ? 'text-[#287094]' : ''
-            }`}
+          className={`relative group bg-transparent border-none ${isActive('/home/holiday') ? 'text-[#287094]' : ''}`}
         >
           <h3 className="text-2xl font-semibold cursor-pointer transition duration-200">
             Holidays
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home/holiday') ? 'w-full' : 'w-0 group-hover:w-full'
-              }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
+              isActive('/home/holiday') ? 'w-full' : 'w-0 group-hover:w-full'
+            }`}
           ></span>
         </button>
 
         <button
           onClick={() => navigate('/home/packages')}
-          className={`relative group bg-transparent border-none ${isActive('/home/packages') ? 'text-[#287094]' : ''
-            }`}
+          className={`relative group bg-transparent border-none ${isActive('/home/packages') ? 'text-[#287094]' : ''}`}
         >
           <h3 className="text-2xl font-semibold cursor-pointer transition duration-200">
             Packages
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home/packages') ? 'w-full' : 'w-0 group-hover:w-full'
-              }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
+              isActive('/home/packages') ? 'w-full' : 'w-0 group-hover:w-full'
+            }`}
           ></span>
         </button>
 
         <button
           onClick={() => navigate('/home/resort')}
-          className={`relative group bg-transparent border-none ${isActive('/home/resort') ? 'text-[#287094]' : ''
-            }`}
+          className={`relative group bg-transparent border-none ${isActive('/home/resort') ? 'text-[#287094]' : ''}`}
         >
           <h3 className="text-2xl font-semibold cursor-pointer transition duration-200">
             Resorts
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home/resort') ? 'w-full' : 'w-0 group-hover:w-full'
-              }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
+              isActive('/home/resort') ? 'w-full' : 'w-0 group-hover:w-full'
+            }`}
           ></span>
         </button>
       </nav>
@@ -151,42 +178,24 @@ function Base() {
           onClick={() => setIsModal('')}
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
-          {/* Close Button */}
-          <button
-            onClick={()=>setIsModal('')} // Close modal when clicked
-            className="absolute top-2 right-2 text-gray-500 font-semibold"
-          >
-            X
-          </button>
           <div
             onClick={(e) => e.stopPropagation()}
             className="relative w-[90%] max-w-[800px] flex justify-center items-center"
           >
             {isModal === 'register' ? (
-              <Registration setIsModal={setIsModal} />
+              <Registration setIsModal={setIsModal}  phoneNumber={phoneNumber}  />
             ) : isModal === 'login' ? (
               <Login setIsModal={setIsModal} />
-            ):isModal === 'verify' ? (
-              <NumberVarify setIsModal={setIsModal} />
-            ) :  null}
+            ) : isModal === 'verify' ? (
+              <NumberVarify setIsModal={setIsModal} setPhoneNumber={setPhoneNumber} />
+            ) : isModal === 'forgot' ? (
+              <ForgotPassword setIsModal={setIsModal}  />
+            ) : null}
           </div>
         </div>
       )}
-
     </div>
   );
 }
 
 export default Base;
-
-
-
-            // {isModal === 'register' ? (
-            //   <Registration setIsModal={setIsModal} />
-            // ) : isModal === 'login' ? (
-            //   <Login setIsModal={setIsModal} />
-            // ) : isModal === 'verify' ? (
-            //   <Verify setIsModal={setIsModal} />
-            // ) : isModal === 'otp' ? (
-            //   <Otp setIsModal={setIsModal} />
-            // ) : null}

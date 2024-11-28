@@ -26,7 +26,8 @@ function AdminLogin () {
       
       dispatch(login({
         user: response.data.user,
-        token: response.data.access
+        token: response.data.access,
+        is_admin: response.data.is_admin
       }));
 
       // Redirect to the admin dashboard
@@ -114,14 +115,14 @@ function AdminLogin () {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+              {/* <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                 Remember me
-              </label>
+              </label> */}
             </div>
 
-            <button type="button" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+            {/* <button type="button" className="text-sm font-medium text-blue-600 hover:text-blue-700">
               Forgot password?
-            </button>
+            </button> */}
           </div>
 
           <button

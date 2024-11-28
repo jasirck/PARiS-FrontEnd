@@ -1,11 +1,11 @@
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}", // Make sure to include all relevant files
   ],
   theme: {
     extend: {
       fontFamily: {
-        openSauce: ["'Open Sauce One'", "sans-serif"],
+        ubuntu: ['Ubuntu', 'sans-serif'], // Add Ubuntu as a custom font
       },
     },
   },

@@ -1,53 +1,53 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../Api";
 
-function NumberVarify({ setIsModal, setPhoneNumber }) {
-  const [phoneNumber, setOtpSendeNumber] = useState(""); // Local state for phone number
-  const [otp, setOtp] = useState(""); // OTP input state
-  const [errorMessage, setErrorMessage] = useState(null); // For error messages
-  const [countdown, setCountdown] = useState(120); // 2 minutes countdown for OTP
-  const [otpSent, setOtpSent] = useState(false); // OTP sent state
-  const [otpVerified, setOtpVerified] = useState(false); // OTP verification state
-  const [showSendAgain, setShowSendAgain] = useState(false); // To show the "Send Again" button
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+function ForgotPassword({ setIsModal }) {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [countdown, setCountdown] = useState(120);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Format countdown timer as MM:SS
   const formattedCountdown = `${Math.floor(countdown / 60)
     .toString()
     .padStart(2, "0")}:${(countdown % 60).toString().padStart(2, "0")}`;
 
-  // Start countdown timer
   useEffect(() => {
     if (countdown === 0) {
-      setShowSendAgain(true); // Show "Send Again" when countdown reaches 0
+      setShowSendAgain(true);
     } else if (otpSent && countdown > 0) {
       const timer = setInterval(() => {
-        setCountdown((prev) => prev - 1); // Decrement countdown every second
+        setCountdown((prev) => prev - 1);
       }, 1000);
 
-      return () => clearInterval(timer); // Clear the timer on component unmount
+      return () => clearInterval(timer);
     }
   }, [countdown, otpSent]);
 
-  // Handle OTP sending
   const handleSendOtp = async () => {
     if (!/^\d{10}$/.test(phoneNumber)) {
       setErrorMessage("Please enter a valid 10-digit phone number.");
       return;
     }
-    setErrorMessage(null); // Clear error message if phone number is valid
-    setIsLoading(true); // Show loading spinner
+    setErrorMessage(null);
+    setIsLoading(true);
 
     try {
-      // Send OTP request to the backend
-      const response = await axios.post("api/user/number-verify", {
+      const response = await axios.post("api/user/forgot-number-verify", {
         phone_number: phoneNumber,
       });
       console.log("OTP sent successfully:", response.data);
       setOtpSent(true);
       setCountdown(120); // Reset the countdown when OTP is sent
     } catch (error) {
-      console.error("Failed to send OTP:", error.response?.data || error.message);
+      console.error(
+        "Failed to send OTP:",
+        error.response?.data || error.message
+      );
       setErrorMessage(
         error.response?.data?.error || "Failed to send OTP. Please try again."
       );
@@ -66,11 +66,11 @@ function NumberVarify({ setIsModal, setPhoneNumber }) {
       });
       console.log("OTP verified successfully:", response.data);
       setOtpVerified(true);
-
-      setPhoneNumber(phoneNumber); // Set phone number in the parent component state
-      setIsModal("register"); // Proceed to registration modal after successful verification
     } catch (error) {
-      console.error("OTP verification failed:", error.response?.data || error.message);
+      console.error(
+        "OTP verification failed:",
+        error.response?.data || error.message
+      );
       setErrorMessage(
         error.response?.data?.error || "Invalid OTP. Please try again."
       );
@@ -79,7 +79,37 @@ function NumberVarify({ setIsModal, setPhoneNumber }) {
     }
   };
 
-  // Handle "Send Again" button
+  // Handle password reset
+  const handlePasswordReset = async () => {
+    if (newPassword !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
+  
+    setIsLoading(true); // Show loading spinner
+    try {
+      const response = await axios.post("api/user/reset-password/", {
+        phone_number: phoneNumber,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      });
+      console.log("Password reset successfully:", response.data);
+      setIsModal('login'); // Close the modal after successful password reset
+    } catch (error) {
+      console.error("Password reset failed:", error.response?.data || error.message);
+      // Check if there's a specific validation error or non_field_error
+      if (error.response?.data?.error) {
+        setErrorMessage(error.response?.data?.error);
+      } else if (error.response?.data?.non_field_errors) {
+        setErrorMessage(error.response?.data?.non_field_errors[0]);
+      } else {
+        setErrorMessage("Password reset failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false); // Hide loading spinner
+    }
+  };
+  
   const handleSendAgain = () => {
     setOtpSent(false);
     setShowSendAgain(false);
@@ -92,40 +122,35 @@ function NumberVarify({ setIsModal, setPhoneNumber }) {
     <div className="relative w-[90%] max-w-[800px] bg-white rounded-2xl shadow-md overflow-hidden z-10 flex flex-col md:flex-row">
       {/* Left Side - Welcome Text */}
       <div className="flex-1 bg-[#f7f9fb] p-8 md:p-12 flex flex-col items-center justify-center text-center">
-        <h2 className="font-['Open_Sauce_One'] text-[25px] font-semibold text-black leading-[30px]">
-          Create an account
+        <button
+          onClick={() => setIsModal("login")} // Go back to the login modal
+          className="absolute top-4 left-4 text-gray-800 font-medium text-sm hover:shadow-2xl"
+        >
+          Back
+        </button>
+        <h2 className="font-['Open_Sauce_One'] text-[18px] font-medium text-black leading-[22px] mt-2">
+          Forgot Password
         </h2>
-        <h3 className="font-['Open_Sauce_One'] text-[18px] font-medium text-black leading-[22px] mt-2">
-          Join us and get started!
+        <h3 className="font-['Open_Sauce_One'] mt-4 text-[12px]" >
+          Enter your registered phone number to reset your password.
         </h3>
-        <div className="mt-8">
-          <p className="font-['Open_Sauce_One'] text-[12px]">
-            Already have an account?{" "}
-            <span
-              onClick={() => setIsModal("login")}
-              className="text-[#205a76] cursor-pointer"
-            >
-              Sign in
-            </span>
-          </p>
-        </div>
       </div>
 
       {/* Right Side - OTP Verification Form */}
       <div className="flex-1 p-8 md:p-12 bg-[#f7f9fb]">
         <h1 className="font-['Open_Sauce_One'] text-[20px] font-medium text-black mb-6 leading-[25px] text-center">
-          Register
+          Reset Password
         </h1>
 
         {/* Phone Number Input */}
-        {!otpSent && (
+        {!otpSent && !otpVerified && (
           <div className="mb-8">
             <input
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
               value={phoneNumber}
-              onChange={(e) => setOtpSendeNumber(e.target.value)}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="Enter Your Phone Number"
               className="w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500"
             />
@@ -158,9 +183,9 @@ function NumberVarify({ setIsModal, setPhoneNumber }) {
               disabled={countdown === 0}
             />
             <p className="text-gray-500 text-[12px] mt-2">
-              Time remaining: {formattedCountdown}  
+              Time remaining: {formattedCountdown}
             </p>
-            
+
             {errorMessage && (
               <p className="text-red-500 text-[12px] mt-2">{errorMessage}</p>
             )}
@@ -185,19 +210,40 @@ function NumberVarify({ setIsModal, setPhoneNumber }) {
           </div>
         )}
 
-        {/* Send Again Button */}
-        {showSendAgain && (
-          <button
-            onClick={handleSendAgain}
-            className="w-full h-[40px] mt-4 bg-[#fcbf49] rounded-[6px] text-black font-medium shadow-md"
-          >
-            Send OTP Again
-          </button>
+        {/* Password Reset Form */}
+        {otpVerified && (
+          <div className="mb-8">
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New Password"
+              className="w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500"
+            />
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm Password"
+              className="w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500 mt-4"
+            />
+            {errorMessage && (
+              <p className="text-red-500 text-[12px] mt-2">{errorMessage}</p>
+            )}
+            <button
+              onClick={handlePasswordReset}
+              className={`w-full h-[40px] mt-4 rounded-[6px] text-white font-medium shadow-md ${
+                isLoading ? "bg-gray-400" : "bg-[#205a76]"
+              }`}
+              disabled={isLoading}
+            >
+              {isLoading ? "Resetting Password..." : "Reset Password"}
+            </button>
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-export default NumberVarify;
-
+export default ForgotPassword;
