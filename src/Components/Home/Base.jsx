@@ -11,6 +11,9 @@ import Registration from './Auth/Registration';
 import Login from './Auth/Login';
 import NumberVarify from './Auth/NumberVarify';
 import ForgotPassword from './Auth/ForgotPassword';
+import { FaSquareInstagram } from "react-icons/fa6";
+import { HiMail } from "react-icons/hi";
+
 
 function Base() {
   const navigate = useNavigate();
@@ -19,14 +22,14 @@ function Base() {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   // Redux state for authentication
-  const { user, profile,token } = useSelector((state) => state.auth);
-  
+  const { user, profile, token } = useSelector((state) => state.auth);
+
 
   const isActive = (path) => location.pathname === path;
 
   useEffect(() => {
-    console.log(user,profile,token);
-    
+    console.log(user, profile, token);
+
     console.log(isModal);
   }, [isModal,]);
 
@@ -45,13 +48,13 @@ function Base() {
           {token ? ( // Check if user is logged in
             <div className="flex items-center space-x-4">
               <img
-              onClick={() => navigate('/profile')}
-              src={profile ? profile : '/user_image_demo.png'} 
+                onClick={() => navigate('/profile')}
+                src={profile ? profile : '/user_image_demo.png'}
                 alt="User profile"
                 className="w-12 h-12 rounded-full object-cover "
               />
               {/* <span className="text-gray-700 font-medium">{user}</span> */}
-              
+
             </div>
           ) : (
             <button
@@ -71,6 +74,11 @@ function Base() {
           src="/PARiS-Home-Page.jpg"
           alt="Hero section background image"
         />
+        <div className="absolute top-1/2 left-[13%] transform  -translate-y-1/2 text-white pl-4">
+          <h1 className="text-4xl  font-medium">Stay</h1>
+          <h1 className=" text-4xl  font-medium">Somewhere</h1>
+          <h1 className="text-4xl font-medium">Unforgattable</h1>
+        </div>
         <div className="bg-white w-3/4 sm:w-1/2 absolute left-1/2 transform -translate-x-1/2 -translate-y-8 rounded-full h-14 shadow-lg flex items-center px-4">
           <div className="flex items-center text-gray-600 font-medium flex-grow space-x-2">
             <IoSearchSharp className="text-xl text-gray-400" />
@@ -92,9 +100,8 @@ function Base() {
             Home
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
-              isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'
-            }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}
           ></span>
         </button>
 
@@ -106,9 +113,8 @@ function Base() {
             Holidays
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
-              isActive('/home/holiday') ? 'w-full' : 'w-0 group-hover:w-full'
-            }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home/holiday') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}
           ></span>
         </button>
 
@@ -120,9 +126,8 @@ function Base() {
             Packages
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
-              isActive('/home/packages') ? 'w-full' : 'w-0 group-hover:w-full'
-            }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home/packages') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}
           ></span>
         </button>
 
@@ -134,9 +139,8 @@ function Base() {
             Resorts
           </h3>
           <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${
-              isActive('/home/resort') ? 'w-full' : 'w-0 group-hover:w-full'
-            }`}
+            className={`absolute left-0 bottom-0 h-0.5 bg-[#287094] transition-all duration-300 ${isActive('/home/resort') ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}
           ></span>
         </button>
       </nav>
@@ -162,12 +166,23 @@ function Base() {
           </div>
           <div>
             <h3 className="text-xl font-semibold mb-4">Contact</h3>
-            <p>Phone: 9207626627</p>
-            <p>Phone: 9497714746</p>
-            <p>Phone: 7306868537, 8606563820</p>
-            <p className="mt-4">Email: paristourstravels@gmail.com</p>
-            <p>Instagram: @paris_tours_travels</p>
+
+            <p className="mb-2">Phone: 9207626627</p>
+            <p className="mb-2">Phone: 9497714746</p>
+            <p className="mb-2">Phone: 7306868537, 8606563820</p>
+
+            <p className="mt-4 flex items-center">
+              <HiMail className="mr-2" />
+               <a href="mailto:paristourstravels@gmail.com" className="text-inherit hover:underline">paristourstravels@gmail.com</a>
+            </p>
+
+            <p className="flex items-center">
+              <FaSquareInstagram className="mr-2" />
+               <a href="https://www.instagram.com/paris_tours_travels" className="text-inherit hover:underline" target="_blank" rel="noopener noreferrer">@paris_tours_travels</a>
+            </p>
+
           </div>
+
         </div>
         <div className="mt-8 text-center text-sm">© 2024 PARiS Tours & Travels. All rights reserved.</div>
       </footer>
@@ -183,13 +198,13 @@ function Base() {
             className="relative w-[90%] max-w-[800px] flex justify-center items-center"
           >
             {isModal === 'register' ? (
-              <Registration setIsModal={setIsModal}  phoneNumber={phoneNumber}  />
+              <Registration setIsModal={setIsModal} phoneNumber={phoneNumber} />
             ) : isModal === 'login' ? (
               <Login setIsModal={setIsModal} />
             ) : isModal === 'verify' ? (
               <NumberVarify setIsModal={setIsModal} setPhoneNumber={setPhoneNumber} />
             ) : isModal === 'forgot' ? (
-              <ForgotPassword setIsModal={setIsModal}  />
+              <ForgotPassword setIsModal={setIsModal} />
             ) : null}
           </div>
         </div>

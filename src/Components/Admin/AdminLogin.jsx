@@ -120,9 +120,9 @@ function AdminLogin () {
               </label> */}
             </div>
 
-            {/* <button type="button" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+            <button type="button" className="text-sm font-medium text-gray-600 hover:text-gray-900">
               Forgot password?
-            </button> */}
+            </button>
           </div>
 
           <button

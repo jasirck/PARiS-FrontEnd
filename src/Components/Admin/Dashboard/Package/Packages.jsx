@@ -29,6 +29,8 @@ function Packages() {
     const fetchPackages = async () => {
       try {
         setLoading(true);
+        console.log(token);
+        
         const response = await axios.get('/api/packages/', {
           headers: { Authorization: `Bearer ${token}` }, 
         });  
@@ -46,7 +48,7 @@ function Packages() {
   }, []);
 
   const handleAddNewPackage = async (packageData) => {
-    try {
+    try {      
       const response = await axios.post('/api/packages/',{Authorization: `Bearer ${token}`} ,packageData);  // Updated to match the backend route
       setPackages([...packages, response.data]);
       setShowAddForm(false);

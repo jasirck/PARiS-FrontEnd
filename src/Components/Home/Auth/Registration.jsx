@@ -74,14 +74,14 @@ export default function Registration({ setIsModal, phoneNumber }) {
     <div className="relative w-[90%] max-w-[800px] bg-white rounded-2xl shadow-md overflow-hidden z-10 flex flex-col md:flex-row">
       {/* Left Side - Welcome Text */}
       <div className="flex-1 bg-[#f7f9fb] p-8 md:p-12 flex flex-col items-center justify-center text-center">
-        <h2 className="font-['Open_Sauce_One'] text-[25px] font-semibold text-black leading-[30px]">
+        <h2 className="font-ubuntu text-[25px] font-semibold text-black leading-[30px]">
           Create an account
         </h2>
-        <h3 className="font-['Open_Sauce_One'] text-[18px] font-medium text-black leading-[22px] mt-2">
+        <h3 className="font-ubuntu text-[18px] font-medium text-black leading-[22px] mt-2">
           Join us and get started!
         </h3>
         <div className="mt-8">
-          <p className="font-['Open_Sauce_One'] text-[12px]">
+          <p className="font-ubuntu text-[12px]">
             Already have an account?{" "}
             <span
               onClick={() => setIsModal("login")}
@@ -95,7 +95,7 @@ export default function Registration({ setIsModal, phoneNumber }) {
 
       {/* Right Side - Registration Form */}
       <div className="flex-1 p-8 md:p-12 bg-[#f7f9fb]">
-        <h1 className="font-['Open_Sauce_One'] text-[20px] font-medium text-black mb-6 leading-[25px] text-center">
+        <h1 className="font-ubuntu text-[20px] font-medium text-black mb-6 leading-[25px] text-center">
           Register
         </h1>
 
@@ -107,7 +107,7 @@ export default function Registration({ setIsModal, phoneNumber }) {
             placeholder="Enter your User Name"
             value={formData.username}
             onChange={handleChange}
-            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500 ${
+            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-ubuntu text-[12px] placeholder-gray-500 ${
               fieldErrors.username ? "border-2 border-red-500" : ""
             }`}
           />
@@ -124,7 +124,7 @@ export default function Registration({ setIsModal, phoneNumber }) {
             placeholder="Enter your First name"
             value={formData.first_name}
             onChange={handleChange}
-            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500 ${
+            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-ubuntu text-[12px] placeholder-gray-500 ${
               fieldErrors.first_name ? "border-2 border-red-500" : ""
             }`}
           />
@@ -141,7 +141,7 @@ export default function Registration({ setIsModal, phoneNumber }) {
             placeholder="Enter your Last name"
             value={formData.last_name}
             onChange={handleChange}
-            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500 ${
+            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-ubuntu text-[12px] placeholder-gray-500 ${
               fieldErrors.last_name ? "border-2 border-red-500" : ""
             }`}
           />
@@ -158,7 +158,7 @@ export default function Registration({ setIsModal, phoneNumber }) {
             placeholder="Enter your email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500 ${
+            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-ubuntu text-[12px] placeholder-gray-500 ${
               fieldErrors.email ? "border-2 border-red-500" : ""
             }`}
           />
@@ -175,7 +175,7 @@ export default function Registration({ setIsModal, phoneNumber }) {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500 ${
+            className={`w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-ubuntu text-[12px] placeholder-gray-500 ${
               fieldErrors.password ? "border-2 border-red-500" : ""
             }`}
           />
@@ -192,7 +192,7 @@ export default function Registration({ setIsModal, phoneNumber }) {
             placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-['Open_Sauce_One'] text-[12px] placeholder-gray-500"
+            className="w-full h-[40px] px-4 bg-[#bcd3de] rounded-[6px] outline-none font-ubuntu text-[12px] placeholder-gray-500"
           />
         </div>
 

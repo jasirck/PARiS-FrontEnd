@@ -10,6 +10,7 @@ function Profile() {
   const [userData, setUserData] = useState(null);
   const token = useSelector((state) => state.auth.token); // Get token from Redux store
 
+
   const handleLogout = () => {
     dispatch(logout()); // Log out the user
     navigate('/'); // Redirect to home
