@@ -159,7 +159,7 @@ function Holiday() {
       <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
         {/* Category Buttons */}
         <div className="flex justify-center items-center w-full">
-          <div className="border-none rounded-l bg-transparent space-x-4 overflow-hidden flex">
+        <div className="border-none rounded-l bg-transparent overflow-hidden flex">
             {categories.map((category) => (
               <button
                 key={category.id}

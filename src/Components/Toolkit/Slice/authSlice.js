@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     user: localStorage.getItem('user') || null,
     token: localStorage.getItem('token') || null,
-    refresh_token: localStorage.getItem('refresh_token') || null,  // Add refresh_token here
+    refresh_token: localStorage.getItem('refresh_token') || null,  
     is_admin: localStorage.getItem('is_admin') || null,
     profile: localStorage.getItem('profile') || null,
 };
@@ -28,15 +28,19 @@ const authSlice = createSlice({
         logout: (state) => {
             state.user = null;
             state.token = null;
-            state.refresh_token = null; // Clear refresh token
+            state.refresh_token = null; 
             localStorage.removeItem('token');
-            localStorage.removeItem('refresh_token'); // Remove refresh token
+            localStorage.removeItem('refresh_token'); 
             localStorage.removeItem('user');
             localStorage.removeItem('is_admin');
             localStorage.removeItem('profile');
         },
+        updateToken: (state, action) => {
+            state.token = action.payload.token;
+            localStorage.setItem('token', action.payload.token);
+        },
     },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout,updateToken } = authSlice.actions;
 export default authSlice.reducer;

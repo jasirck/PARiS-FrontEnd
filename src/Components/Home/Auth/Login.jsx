@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import axios from '../../../Api';
+import axios from '../../../utils/Api';
 import { login } from '../../Toolkit/Slice/authSlice'; 
 import GoogleAuth from './GoogleAuth';
 

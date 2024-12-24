@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "../../../../utils/Api";
 import { useSelector } from "react-redux";
-import AddResortModal from "./AddResort";
 import { Button } from "@nextui-org/react";
-import ResortDetails from "./ResortDetails";
-import ResortEdit from "./ResortEdit";
 import { div } from "framer-motion/client";
 
-function Resorts() {
+function BookedResort() {
   const [searchQuery, setSearchQuery] = useState("");
   const [resorts, setResorts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -84,26 +81,8 @@ function Resorts() {
         </div>
       </div>
 
-      {showAddForm && (
-        <div className="mb-4 p-4 border border-gray-300 rounded-lg">
-          <AddResortModal
-            isOpen={showAddForm}
-            onClose={() => setShowAddForm(false)}
-          />
-        </div>
-      )}
-      {selectedResortId && (
-        <ResortDetails
-          resortId={selectedResortId}
-          closeModal={() => setSelectedResortId(null)}
-        />
-      )}
-      {selectedResortIdEdit && (
-          <ResortEdit
-            resortId={selectedResortIdEdit}
-            closeModal={() => setSelectedResortIdEdit(null)}
-          />
-      )}
+      
+      
 
       <div className="grid grid-cols-7 gap-2 text-gray-700 font-semibold border-b border-gray-300">
         <div>Resort Name</div>
@@ -148,4 +127,4 @@ function Resorts() {
   );
 }
 
-export default Resorts;
+export default BookedResort;

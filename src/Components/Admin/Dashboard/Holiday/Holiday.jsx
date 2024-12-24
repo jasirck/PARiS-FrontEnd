@@ -1,63 +1,62 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "../../../../utils/Api";
-import AddPackageModal from "./AddPackeges";
 import { useSelector } from "react-redux";
-import PackageDetailsModal from "./PackageDetails";
-import PackageEditModal from "./PackageEdit";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
+import AddHolidayModal from "./AddHoliday";
+import HolidayDetailsModal from "./HolidayDetails";
+import HolidayEditModal from "./HolidayEdit";
 
 
-function Packages() {
+function Holidays() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [packages, setPackages] = useState([]);
+  const [Holidays, setHolidays] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { token } = useSelector((state) => state.auth);
-  const [selectedPackageId, setSelectedPackageId] = useState(null);
+  const [selectedHolidayId, setSelectedHolidayId] = useState(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  const filteredPackages = useMemo(() => {
-    if (Array.isArray(packages)) {
-      return packages.filter((pkg) =>
+  const filteredHolidays = useMemo(() => {
+    if (Array.isArray(Holidays)) {
+      return Holidays.filter((pkg) =>
         pkg.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    return []; // Return an empty array if packages is not an array
-  }, [searchQuery, packages]);
+    return []; // Return an empty array if Holidays is not an array
+  }, [searchQuery, Holidays]);
 
-  // Fetch packages data from the backend
+  // Fetch Holidays data from the backend
   useEffect(() => {
-    console.log(token);
+    console.log('Holidays',token);
     
-    const fetchPackages = async () => {
+    const fetchHolidays = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/api/admin-packages/", {
+        const response = await axios.get("/api/holidays/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setPackages(response.data);
+        setHolidays(response.data);
         setLoading(false);
       } catch (err) {
-        setError("Failed to fetch packages.");
+        setError("Failed to fetch Holidays.");
         setLoading(false);
       }
     };
 
-    fetchPackages();
+    fetchHolidays();
   }, [showAddForm]);
 
-  const openViewModal = (packageId) => {
-    setSelectedPackageId(packageId);
+  const openViewModal = (HolidayId) => {
+    setSelectedHolidayId(HolidayId);
     setViewModalOpen(true);
   };
 
-  const openEditModal = (packageId) => {
-    setSelectedPackageId(packageId);
+  const openEditModal = (HolidayId) => {
+    setSelectedHolidayId(HolidayId);
     setEditModalOpen(true);
-    console.log(packageId);
   };
 
   const closeModals = () => {
@@ -66,14 +65,14 @@ function Packages() {
   };
 
   if (loading) {
-    return <div>Loading packages...</div>;
+    return <div>Loading Holidays...</div>;
   }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
       {/* Header with Search and Add New Button */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Packages</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Holidays</h2>
         <div className="flex gap-2">
           <input
             type="text"
@@ -87,24 +86,24 @@ function Packages() {
             onClick={() => setTimeout(() => setShowAddForm(!showAddForm), 300)}
 
           >
-            {showAddForm ? "Cancel" : "Add New Package"}
+            {showAddForm ? "Cancel" : "Add New Holiday"}
           </Button>
         </div>
       </div>
 
-      {/* Add New Package Form */}
+      {/* Add New Holiday Form */}
       {showAddForm && (
         <div className="mb-4 p-4 border border-gray-300 rounded-lg">
-          <AddPackageModal
+          <AddHolidayModal
             isOpen={showAddForm}
             onClose={() => setShowAddForm(false)}
           />
         </div>
       )}
 
-      {/* Packages Table */}
+      {/* Holidays Table */}
       <div className="grid grid-cols-6 gap-2 text-gray-700 font-semibold border-b border-gray-300">
-        <div>Package</div>
+        <div>Holiday</div>
         <div>Code</div>
         <div>Base Price</div>
         <div>Days</div>
@@ -113,7 +112,7 @@ function Packages() {
       </div>
 
       <div>
-        {filteredPackages.map((pkg) => (
+        {filteredHolidays.map((pkg) => (
           <div
             key={pkg.id}
             className="grid grid-cols-6 gap-2 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all"
@@ -132,7 +131,7 @@ function Packages() {
                 View
               </Button>
               <Button
-                onPress={() => setTimeout( () => openEditModal(pkg.id), 300)}
+                onClick={() => setTimeout(() => openEditModal(pkg.id), 300)}
                 className="bg-[#4a4a4a] text-white px-3 py-2  rounded-lg pl-4"
               >
                 Edit
@@ -142,14 +141,14 @@ function Packages() {
         ))}
       </div>
 
-      <PackageDetailsModal
-        packageId={selectedPackageId}
+      <HolidayDetailsModal
+        HolidayId={selectedHolidayId}
         isOpen={viewModalOpen}
         closeModal={closeModals}
       />
       <div>
-        <PackageEditModal
-          packageId={selectedPackageId}
+        <HolidayEditModal
+          HolidayId={selectedHolidayId}
           isOpen={editModalOpen}
           onClose={closeModals}
         />
@@ -158,4 +157,4 @@ function Packages() {
   );
 }
 
-export default Packages;
+export default Holidays;

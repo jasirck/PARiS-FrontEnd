@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import axios from "../../../Api"; // Replace with your Axios instance
+import axios from "../../../utils/Api"; // Replace with your Axios instance
 
 export default function Registration({ setIsModal, phoneNumber }) {
   const [formData, setFormData] = useState({

@@ -34,7 +34,7 @@ function GoogleAuth({ setIsModal }){
           { user: userInfo }
         );
 
-        const { token, user, is_admin, profile } = backendResponse.data;
+        const { token, user, is_admin, profile ,refresh_token} = backendResponse.data;
         console.log(token);
         
 
@@ -45,6 +45,7 @@ function GoogleAuth({ setIsModal }){
             user,
             is_admin,
             profile,
+            refresh_token
           })
         );
         setIsModal('')

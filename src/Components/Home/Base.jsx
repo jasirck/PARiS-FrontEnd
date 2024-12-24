@@ -4,12 +4,12 @@ import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'; // Import Redux hooks
 import { logout } from "../Toolkit/Slice/authSlice";
 import Home from './menu/Home';
-import Packages from './menu/Packages';
-import Holiday from './menu/Holiday';
-import Resort from './menu/Resort';
+import Packages from './menu/Package/Packages';
+import Holiday from './menu/Holiday/Holidays';
+import Resort from './menu/Resort/Resort';
 import Registration from './Auth/Registration';
 import Login from './Auth/Login';
-import NumberVarify from './Auth/NumberVarify';
+import NumberVarify from './Auth/NumberVarify';2
 import ForgotPassword from './Auth/ForgotPassword';
 import { FaSquareInstagram } from "react-icons/fa6";
 import { HiMail } from "react-icons/hi";
@@ -21,12 +21,9 @@ function Base() {
   const [isModal, setIsModal] = useState('');
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  // Redux state for authentication
-  const { user, profile, token } = useSelector((state) => state.auth);
-
-
+  const { user,profile, token } = useSelector((state) => state.auth);
   const isActive = (path) => location.pathname === path;
-
+  
   useEffect(() => {
     console.log(user, profile, token);
 
@@ -50,7 +47,7 @@ function Base() {
               <img
                 onClick={() => navigate('/profile')}
                 src={profile ? profile : '/user_image_demo.png'}
-                alt="User profile"
+                alt={profile}
                 className="w-12 h-12 rounded-full object-cover "
               />
               {/* <span className="text-gray-700 font-medium">{user}</span> */}
@@ -146,13 +143,13 @@ function Base() {
       </nav>
 
       {/* Content Section */}
-      <div className="bg-[#F2F2F0] mx-4 sm:mx-8 my-1 px-1 sm:px-12 py-6 shadow-inner rounded-3xl">
+      <div className="bg-[#F2F2F0] mx-4 sm:mx-8 my-1 px-1 sm:px-12 py-6 shadow-  rounded-3xl">
         <Routes>
-          <Route index element={<Home />} />
-          <Route path="home" element={<Home />} />
-          <Route path="home/holiday" element={<Holiday />} />
-          <Route path="home/packages" element={<Packages />} />
-          <Route path="home/resort" element={<Resort />} />
+          <Route index element={<Home  setIsModal={setIsModal} />} />
+          <Route path="home" element={<Home  setIsModal={setIsModal} />} />
+          <Route path="home/holiday" element={<Holiday  setIsModal={setIsModal} />} />
+          <Route path="home/packages" element={<Packages setIsModal={setIsModal} />} />
+          <Route path="home/resort" element={<Resort  setIsModal={setIsModal} />} />
         </Routes>
       </div>
 

@@ -7,8 +7,9 @@ import * as yup from "yup";
 import { useSelector } from "react-redux";
 import {  toast } from 'sonner'
 import { Button } from "@nextui-org/react";
+import { tr } from "framer-motion/client";
   
-const AddPackageModal = ({ isOpen, onClose }) => {
+const AddHolidayModal = ({ isOpen, onClose }) => {
   const [resorts, setResorts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
       name: "",
       start: "",
       end: "",
-      is_holiday: false,
+      is_holiday: true,
       base_price: "",
       adult_price: "",
       child_price: "",
@@ -144,6 +145,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
     formData.append("adult_price", data.adult_price);
     formData.append("child_price", data.child_price);
     formData.append("category", data.category);
+    formData.append("is_holiday", true);
     formData.append("resort", data.resort);
     formData.append("note", data.note || "");
     formData.append(
@@ -179,7 +181,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
   
     try {
       setLoading(true);
-      await axios.post("/api/admin-packages/", formData, {
+      await axios.post("/api/admin-holidays/", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -494,8 +496,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
-export default AddPackageModal;
-
+export default AddHolidayModal;
 
 
 // import React, { useState, useEffect } from "react";
@@ -505,7 +506,7 @@ export default AddPackageModal;
 // import { useSelector } from "react-redux";
 // import { toast } from 'sonner';
 
-// const AddPackageModal = ({ isOpen, onClose }) => {
+// const AddHolidayModal = ({ isOpen, onClose }) => {
 //   const [resorts, setResorts] = useState([]);
 //   const [categories, setCategories] = useState([]);
 //   const [loading, setLoading] = useState(false);
@@ -576,15 +577,12 @@ export default AddPackageModal;
 //     setPackageExcluded(updatedExcluded);
 //   };
 
-//   const formData = new FormData();
-
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     const formData = new FormData(e.currentTarget);
 //     setLoading(true);
 
 //     try {
-//       // Handle day plans and images
 //       const updatedDays = await Promise.all(
 //         dayPlans.map(async (dayPlan) => {
 //           if (dayPlan.place_photo instanceof File) {
@@ -598,7 +596,6 @@ export default AddPackageModal;
 //         })
 //       );
 
-//       // Prepare form data
 //       const packageData = {
 //         name: formData.get("name"),
 //         start: formData.get("start"),
@@ -608,14 +605,18 @@ export default AddPackageModal;
 //         adult_price: formData.get("adult_price"),
 //         child_price: formData.get("child_price"),
 //         category: formData.get("category"),
+//         is_holiday: true,
+//         valid: true,
 //         resort: formData.get("resort"),
 //         note: formData.get("note") || "",
-//         package_included: packageIncluded.filter(item => item.trim() !== ""),
-//         package_excluded: packageExcluded.filter(item => item.trim() !== ""),
-//         days_package: JSON.stringify(updatedDays)
-//       };
+//         package_included: packageIncluded.filter(item => item.trim() !== "").join(", "),
+//         package_excluded: packageExcluded.filter(item => item.trim() !== "").join(", "),
+//         days_package: updatedDays
+//     };
+    
 
-//       await axios.post("/api/admin-packages/", packageData, {
+
+//       await axios.post("/api/admin-holiday/", packageData, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "application/json",
@@ -767,7 +768,7 @@ export default AddPackageModal;
 //                   placeholder="Enter place name"
 //                   labelPlacement="outside"
 //                 />
-//                 <br />
+                
 //                 <Input
 //                   label="Activity"
 //                   value={dayPlan.activity}
@@ -775,7 +776,7 @@ export default AddPackageModal;
 //                   placeholder="Enter activity"
 //                   labelPlacement="outside"
 //                 />
-//                 <br />
+
 //                 <Select
 //                   label="Resort"
 //                   value={dayPlan.resort}
@@ -804,7 +805,7 @@ export default AddPackageModal;
 //           </div>
  
 //           <div className="w-full flex justify-between gap-4">
-//             <Button color="danger" className="w-[15%]"  onClick={onClose} fullWidth>
+//             <Button color="danger" className="w-[15%]" onClick={() => setTimeout(onClose, 300)} fullWidth>
 //               Cancel
 //             </Button>
 //             <Button color="primary" className="w-[15%] text-end" type="submit" fullWidth disabled={loading}>
@@ -817,4 +818,4 @@ export default AddPackageModal;
 //   );
 // };
 
-// export default AddPackageModal;    
+// export default AddHolidayModal;    

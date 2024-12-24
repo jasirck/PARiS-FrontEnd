@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../Api'; // Import the Axios instance
+import axiosInstance from '../../utils/Api'; // Import the Axios instance
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../Components/Toolkit/Slice/authSlice';
@@ -7,7 +7,7 @@ import { login } from '../../Components/Toolkit/Slice/authSlice';
 
 function AdminLogin () {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Redux dispatch to trigger login action
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -27,10 +27,11 @@ function AdminLogin () {
       dispatch(login({
         user: response.data.user,
         token: response.data.access,
-        is_admin: response.data.is_admin
+        is_admin: response.data.is_admin,
+        refresh_token: response.data.refresh,
+        profile: response.data.profile,
       }));
-
-      // Redirect to the admin dashboard
+            
       navigate('/admin');
       
     } catch (error) {
@@ -115,9 +116,9 @@ function AdminLogin () {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              {/* <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                 Remember me
-              </label> */}
+              </label>
             </div>
 
             <button type="button" className="text-sm font-medium text-gray-600 hover:text-gray-900">
