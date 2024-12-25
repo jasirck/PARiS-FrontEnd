@@ -158,7 +158,7 @@ function NumberVarify({ setIsModal, setPhoneNumber }) {
               disabled={countdown === 0}
             />
             <p className="text-gray-500 text-[12px] mt-2">
-              Time remaining: {formattedCountdown}  
+              Time remaining: {formattedCountdown}
             </p>
             
             {errorMessage && (

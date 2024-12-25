@@ -4,38 +4,26 @@ import axios from "../../../../utils/Api";
 import { useSelector } from "react-redux";
 import { Button } from "@nextui-org/react";
 import PaymentForm from "../../PaymentForm";
-import PackageDeteils from "./PackageDeteils";
+import ResortDetailModal from "./ResortDetails";
 
-function Package() {
+function Resort() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const token = useSelector((state) => state.auth.token);
-  const [selectedPackage, setSelectedPackage] = useState(null);
-const [countdowns, setCountdowns] = useState({});
+  const [selectedResort, setSelectedResort] = useState(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get("api/booked-package/", {
+        const response = await axios.get("api/booked-resort/", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         console.log("Bookings:", response.data);
         setBookings(response.data);
-        // Initialize countdowns
-        const initialCountdowns = {};
-        response.data.forEach((booking) => {
-          if (booking.conformed === "Confirmed") {
-            const targetTime = new Date(booking.date).getTime();
-            const now = new Date().getTime();
-            const timeLeft = Math.max(0, targetTime - now); // Ensure no negative time
-            initialCountdowns[booking.id] = timeLeft;
-          }
-        });
-        setCountdowns(initialCountdowns);
       } catch (err) {
         setError("Failed to fetch bookings");
         console.error("Error fetching bookings:", err);
@@ -46,37 +34,6 @@ const [countdowns, setCountdowns] = useState({});
 
     fetchBookings();
   }, [token]);
-
-  useEffect(() => {
-      const interval = setInterval(() => {
-        setCountdowns((prevCountdowns) => {
-          const updatedCountdowns = {};
-          for (const id in prevCountdowns) {
-            updatedCountdowns[id] = Math.max(0, prevCountdowns[id] - 1000); // Decrease by 1 second
-          }
-          return updatedCountdowns;
-        });
-      }, 1000);
-  
-      return () => clearInterval(interval); // Clean up on component unmount
-    }, []);
-
-
-  const formatTime = (milliseconds) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${hours}h ${minutes}m ${seconds}s`;
-  };
-
-  const handleSelectPackage = (id) => {
-    if (!token) {
-      setIsModal("login");
-      return;
-    }
-    setSelectedPackage(id);
-  };
 
   if (loading) {
     return (
@@ -100,7 +57,7 @@ const [countdowns, setCountdowns] = useState({});
         amount={selectedBooking.total_amount}
         name={selectedBooking.user_name}
         booked_id={selectedBooking.id}
-        category={"package"}
+        category={"resort"}
       />
     );
   }
@@ -119,13 +76,13 @@ const [countdowns, setCountdowns] = useState({});
                 <div className="w-full md:w-60 h-32 md:h-36 rounded-xl relative overflow-hidden bg-[#287094] transform transition-transform duration-300 group-hover:scale-105">
                   <img
                     src={`https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${booking.image}`}
-                    alt={booking.package_name}
+                    alt={booking.resort_name}
                     className="absolute inset-0 object-cover w-full h-full"
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
                   <div className="absolute inset-0 p-4 flex flex-col justify-between">
                     <span className="text-xl md:text-2xl font-medium text-white drop-shadow-lg">
-                      {booking.package_name}
+                      {booking.resort_name}
                     </span>
                   </div>
                 </div>
@@ -147,9 +104,16 @@ const [countdowns, setCountdowns] = useState({});
                 </div>
                 <div className="flex items-center space-x-3">
                   <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#023246]" />
-                  <span className="text-sm text-[#023246]">Date:</span>
+                  <span className="text-sm text-[#023246]">Start Date:</span>
                   <span className="text-base md:text-lg font-medium text-[#023246]">
-                    {new Date(booking.date).toLocaleDateString()}
+                    {new Date(booking.start_date).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#023246]" />
+                  <span className="text-sm text-[#023246]">End Date:</span>
+                  <span className="text-base md:text-lg font-medium text-[#023246]">
+                    {new Date(booking.end_date).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -167,19 +131,13 @@ const [countdowns, setCountdowns] = useState({});
                 {booking.conformed === "Requested" ? (
                   <Button color="warning">Requested</Button>
                 ) : booking.conformed === "Confirmed" ? (
-                  <div className="flex flex-col items-center">
-                    <Button onClick={() => handleSelectPackage(booking.package)} color="success">Details</Button>
-                    <span className="text-sm text-[#023246] mt-2">
-                      Starts in: {formatTime(countdowns[booking.id] || 0)}
-                    </span>
-                  </div>
-                ) : // <Button
-                //   color="success"
-                //   onClick={() => handleSelectPackage(booking.package)}
-                // >
-                //   Details
-                // </Button>
-                booking.conformed === "Declined" ? (
+                  <Button
+                    color="success"
+                    onClick={() => setSelectedResort(booking.resort)}
+                  >
+                    Details
+                  </Button>
+                ) : booking.conformed === "Declined" ? (
                   <Button color="danger">Rejected</Button>
                 ) : (
                   <Button
@@ -205,12 +163,12 @@ const [countdowns, setCountdowns] = useState({});
           No Packages bookings found.
         </div>
       )}
-      {selectedPackage && (
+      {selectedResort && (
         <div>
-          <PackageDeteils
-            isOpen={!!selectedPackage}
-            onClose={() => setSelectedPackage(null)}
-            packageId={selectedPackage}
+          <ResortDetailModal
+            isOpen={true}
+            onClose={() => setSelectedResort(null)}
+            ResortId={selectedResort}
           />
         </div>
       )}
@@ -218,4 +176,4 @@ const [countdowns, setCountdowns] = useState({});
   );
 }
 
-export default Package;
+export default Resort;

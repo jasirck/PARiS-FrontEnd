@@ -7,6 +7,7 @@ import {
   ModalFooter,
 } from "@nextui-org/react";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 const ResortDetails = ({ resortId, closeModal }) => {
   const [resort, setResort] = useState(null);
@@ -14,12 +15,15 @@ const ResortDetails = ({ resortId, closeModal }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [error, setError] = useState(null);
   const [visibleImageStartIndex, setVisibleImageStartIndex] = useState(0);
+  const {  token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchResortDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/admin-resorts/${resortId}/`);
+        const response = await axios.get(`/api/admin-resorts/${resortId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (!response.data) {
           throw new Error("No resort data found");
@@ -179,6 +183,15 @@ const ResortDetails = ({ resortId, closeModal }) => {
                   <p className="font-semibold text-[#023246] mb-1">Pool</p>
                   <p className="text-[#cd2f2f]">
                     {resort.pool ? "Yes,Have Pool" : "Not Have Pool"}
+                  </p>
+                </div>
+                <div
+                  className="bg-[#F6F6F6] p-3 rounded-lg shadow-sm transition-all duration-300 ease-in-out transform hover:scale-[1.02]"
+                  style={{ animationDelay: `${5 * 100}ms` }}
+                >
+                  <p className="font-semibold text-[#023246] mb-1">Valid</p>
+                  <p className="text-[#cd2f2f]">
+                    {resort.valid ? "Yes" : "No"}
                   </p>
                 </div>
               </div>

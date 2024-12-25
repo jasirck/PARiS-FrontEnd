@@ -143,6 +143,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
     formData.append("base_price", data.base_price);
     formData.append("adult_price", data.adult_price);
     formData.append("child_price", data.child_price);
+    formData.append("valid", true);
     formData.append("category", data.category);
     formData.append("resort", data.resort);
     formData.append("note", data.note || "");
@@ -312,6 +313,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
                   <p className="text-red-500 text-sm">{errors.end.message}</p>
                 )}
               </div>
+              
             </div>
 
             <div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../../utils/Api";
 import { motion } from "framer-motion";
-import BookingModal from "./Booking";
 import { start } from "@cloudinary/url-gen/qualifiers/textAlignment";
 import { div } from "framer-motion/client";
 import { useSelector } from "react-redux";
@@ -72,10 +71,6 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
     }
   };
 
-  // Booking modal handlers
-  const handleBookingModal = (status) => {
-    setIsModalOpen(status);
-  };
 
   // Pricing calculation
   const calculatePricing = () => {
@@ -255,43 +250,10 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
             >
               Close
             </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-[#287094] text-white px-6 py-2 rounded-full hover:bg-[#1e5674] transition flex items-center"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Book Your Stay
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-[#287094] text-white px-6 py-2 rounded-full hover:bg-[#1e5674] transition flex items-center"
-              onClick={() => alert('Callback request to be implemented')}
-            >
-              📞 Request Callback
-            </motion.button>
+            
+            
           </motion.div>
         </div>
-
-        {/* Booking Modal */}
-        {isModalOpen && (
-          <div>
-            <BookingModal
-            handleBookingModal={() => setIsModalOpen(false)}
-            isModalOpen={isModalOpen}
-            data={{
-              name: resortData.name,
-              start: resortData.start,
-              end: resortData.end,
-              base_price: resortData.base_price,
-              adult_price: resortData.adult_price,
-              child_price: resortData.child_price,
-              id: ResortId
-            }}
-          />
-          </div>
-        )}
       </div>
     </motion.div>
   );

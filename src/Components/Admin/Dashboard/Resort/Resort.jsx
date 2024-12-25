@@ -121,7 +121,7 @@ function Resorts() {
             key={resort.id}
             className="grid grid-cols-7 gap-2 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all"
           >
-            <div>{resort.name}</div>
+            <div className={` ${resort.valid ? "" : "text-red-600"}`}>{resort.name}</div>
             <div>{resort.location}</div>
             <div>{resort.pool ? "Yes" : "No"}</div>
             <div>{resort.base_price}</div>

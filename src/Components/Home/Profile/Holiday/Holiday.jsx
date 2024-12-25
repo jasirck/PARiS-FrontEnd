@@ -4,13 +4,16 @@ import axios from "../../../../utils/Api";
 import { useSelector } from "react-redux";
 import { Button } from "@nextui-org/react";
 import PaymentForm from "../../PaymentForm";
+import HolidayDetails from "./HolidayDeteils";
 
 function Holiday() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null); // State to hold the selected booking details
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [countdowns, setCountdowns] = useState({});
+  const [selectedHoliday, setSelectedHoliday] = useState(null);
 
   const token = useSelector((state) => state.auth.token);
 
@@ -23,6 +26,17 @@ function Holiday() {
 
         console.log("Bookings:", response.data);
         setBookings(response.data);
+         // Initialize countdowns
+         const initialCountdowns = {};
+         response.data.forEach((booking) => {
+           if (booking.conformed === "Confirmed") {
+             const targetTime = new Date(booking.date).getTime();
+             const now = new Date().getTime();
+             const timeLeft = Math.max(0, targetTime - now); // Ensure no negative time
+             initialCountdowns[booking.id] = timeLeft;
+           }
+         });
+         setCountdowns(initialCountdowns);
       } catch (err) {
         setError("Failed to fetch bookings");
         console.error("Error fetching bookings:", err);
@@ -33,6 +47,35 @@ function Holiday() {
 
     fetchBookings();
   }, [token]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdowns((prevCountdowns) => {
+        const updatedCountdowns = {};
+        for (const id in prevCountdowns) {
+          updatedCountdowns[id] = Math.max(0, prevCountdowns[id] - 1000); // Decrease by 1 second
+        }
+        return updatedCountdowns;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval); // Clean up on component unmount
+  }, []);
+
+  const formatTime = (milliseconds) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
+  const handleSelectHoliday = (id) => {
+    if (!token) {
+      setIsModal("login");
+      return;
+    }
+    setSelectedHoliday(id);
+  };
 
   if (loading) {
     return (
@@ -56,6 +99,7 @@ function Holiday() {
         amount={selectedBooking.total_amount}
         name={selectedBooking.user_name}
         booked_id={selectedBooking.id}
+        category={'package'}
       />
     );
   }
@@ -126,12 +170,18 @@ function Holiday() {
                     Requested
                   </Button>
                 ) : booking.conformed === "Confirmed" ? (
-                  <Button
-                    color="success"
-                    onClick={() => setSelectedBooking(booking)}
-                  >
-                    Details
-                  </Button>
+                  <div className="flex flex-col items-center">
+                    <Button onPress={() => handleSelectHoliday(booking)} color="success">Details</Button>
+                    <span className="text-sm text-[#023246] mt-2">
+                      Starts in: {formatTime(countdowns[booking.id] || 0)}
+                    </span>
+                  </div>
+                  // <Button
+                  //   color="success"
+                  //   onClick={() => setSelectedBooking(booking)}
+                  // >
+                  //   Details
+                  // </Button>
                 ) : booking.conformed === "Declined" ? (
                   <Button
                     color="danger"
@@ -153,13 +203,22 @@ function Holiday() {
             </div>
           </div>
 
-          <div className="h-1 bg-[#287094]" />
+          {/* <div className="h-1 bg-[#287094]" /> */}
         </div>
       ))}
 
       {bookings.length === 0 && (
         <div className="text-center text-[#023246] p-8 bg-[#D4D4CE] rounded-xl">
           No holiday bookings found.
+        </div>
+      )}
+      {selectedHoliday && (
+        <div>
+          <HolidayDetails
+            isOpen={!!selectedHoliday}
+            onClose={() => setSelectedHoliday(null)}
+            packageId={selectedHoliday}
+          />
         </div>
       )}
     </div>

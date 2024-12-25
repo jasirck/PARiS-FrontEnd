@@ -497,6 +497,7 @@ const AddResortModal = ({ isOpen, onClose }) => {
       formData.append("child_price", data.child_price);
       formData.append("category", data.category);
       formData.append("pool", data.pool || false);
+      formData.append("valid", true);
       formData.append("is_holiday", true);
       formData.append("policy", data.policy || "");
       formData.append("images", uploadedImages.join(","));
@@ -648,6 +649,9 @@ const AddResortModal = ({ isOpen, onClose }) => {
                       ))}
                     </div>
                   </div>
+                  <Button color="primary" type="submit">
+                    {loading ? "Saving..." : "Save Resort"}
+                  </Button>
                 </form>
           </ModalBody>
         </>

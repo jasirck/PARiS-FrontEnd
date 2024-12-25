@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "../../../../utils/Api";
 import ResortDetailModal from "./ResortDetails";
+import { useSelector } from "react-redux";
 
-function Resort() {
+function Resort({setIsModal}) {
   const [resorts, setResorts] = useState([]);
   const [filteredResorts, setFilteredResorts] = useState([]);
   const [sortOrder, setSortOrder] = useState("default");
@@ -10,6 +11,7 @@ function Resort() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedResort, setSelectedResort] = useState(null);
+  const { token } = useSelector((state) => state.auth);
 
   // Fetch Resorts and Categories
   useEffect(() => {
@@ -63,6 +65,14 @@ function Resort() {
     });
   }, [filteredResortsMemo, sortOrder]);
 
+  const handleSelectPackage = (id) => {
+    if (!token) {
+      setIsModal("login");
+      return;
+    }
+    setSelectedResort(id)
+  };
+
   return (
     <div className="space-y-6 p-6">
       {/* Resort List and Categories */}
@@ -97,7 +107,7 @@ function Resort() {
             className="group relative bg-white rounded-2xl shadow-md overflow-hidden"
           >
             <div
-              onClick={() => setSelectedResort(resort.id)}
+              onClick={() => handleSelectPackage(resort.id)}
               className="relative h-48 overflow-hidden"
             >
               <img

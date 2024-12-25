@@ -210,6 +210,7 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
     formData.append("base_price", data.base_price);
     formData.append("adult_price", data.adult_price);
     formData.append("child_price", data.child_price);
+    formData.append("valid", data.valid);
     formData.append("category", data.category);
     formData.append("resort", data.resort);
     formData.append("note", data.note || "");
@@ -391,6 +392,19 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
                   )}
                 </div>
               </div>
+              <div className="w-1/2">
+                  <label className=" text-lg font-medium text-[#023246]">
+                    Valid:
+                  </label>
+                  <input
+                    type="checkbox"
+                    {...register("valid")}
+                    className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                  />
+                  {errors.end && (
+                    <p className="text-red-500 text-sm">{errors.end.message}</p>
+                  )}
+                </div>
 
               <div>
                 <label className="block text-lg font-medium text-[#023246]">

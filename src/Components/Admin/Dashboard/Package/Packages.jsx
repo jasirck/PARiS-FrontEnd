@@ -116,13 +116,13 @@ function Packages() {
         {filteredPackages.map((pkg) => (
           <div
             key={pkg.id}
-            className="grid grid-cols-6 gap-2 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all"
+            className={`grid -mx-4 grid-cols-6 gap-2 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all`}
           >
-            <div>{pkg.name}</div>
+            <div className="mx-4">{pkg.name}</div>
             <div>{pkg.id}</div>
             <div>{pkg.base_price}</div>
             <div>{pkg.days}</div>
-            <div>{pkg.end}</div>
+            <div className={` ${pkg.valid ? "" : "text-red-600"}`}>{pkg.end}</div>
             <div className="gap-1 flex">
               <Button
 

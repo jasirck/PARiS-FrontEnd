@@ -290,6 +290,15 @@ const ResortEdit = ({ resortId, closeModal }) => {
                   </Checkbox>
                 )}
               />
+              <Controller
+                name="valid"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Checkbox isSelected={value} onValueChange={onChange}>
+                    Valid
+                  </Checkbox>
+                )}
+              />
 
               <div>
                 <label className="block text-lg font-medium text-[#023246] mb-2">

@@ -88,6 +88,12 @@ const PackageDetailsModal = ({ packageId, isOpen, closeModal }) => {
             {packageData.end}
           </p>
         </div>
+        <div className="bg-gray-100 p-4 rounded-md">
+          <p className="text-sm text-gray-500">Valid:</p>
+          <p className="text-lg font-semibold text-gray-800">
+            {packageData.valid ? "Yes" : "No"}
+          </p>
+        </div>
       </div>
 
       <h3 className="text-xl font-semibold text-gray-800 mb-2">Inclusions</h3>

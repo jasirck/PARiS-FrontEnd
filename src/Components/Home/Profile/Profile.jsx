@@ -7,6 +7,7 @@ import { Edit, LogOut, ArrowLeft, Save, X } from "lucide-react";
 import axios from "../../../utils/Api";
 import Holiday from "./Holiday/Holiday";
 import Package from "./Packages/Packages";
+import Resort from "./Resort/Resort";
 
 // Profile Component
 function Profile() {
@@ -110,7 +111,7 @@ function Profile() {
         {/* Header */}
         <div className="flex justify-between mb-8">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/')}
             className="flex items-center space-x-2 bg-[#D4D4CE] shadow-md hover:bg-opacity-80 transition-colors px-4 py-2 rounded-lg"
           >
             <ArrowLeft className="h-5 w-5 text-[#023246]" />
@@ -224,7 +225,7 @@ function Profile() {
             <Route path="/" element={<Holiday />} />
             <Route path="/holiday" element={<Holiday />} />
             <Route path="/packages" element={<Package />} />
-            <Route path="/resort" element={<div>Resort Content</div>} />
+            <Route path="/resort" element={<Resort/>} />
             <Route path="/flight" element={<div>Flight Content</div>} />
             <Route path="/visa" element={<div>Visa Content</div>} />
           </Routes>
