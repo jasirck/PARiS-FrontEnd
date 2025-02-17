@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
 
-function HolidayBooking() {
+function HolidayBooking( {handletrackid}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookedPackages, setBookedPackages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,6 +30,7 @@ function HolidayBooking() {
       const response = await axios.get("/api/admin-booked-package/", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // console.log(response.data);
       setBookedPackages(response.data);
     } catch (err) {
       setError("Failed to fetch Holiday Requests.");
@@ -117,7 +118,7 @@ function HolidayBooking() {
                 <td className=" overflow-x-auto whitespace-nowrap">
                   {booking.user_phone_number || booking.user_email}
                 </td>
-                <td>{booking.package}</td>
+                <td onClick={() => handletrackid('Packages','/admin/packages',booking.package,'package')} className="ml-8">{booking.package}</td>
                 <td>{booking.package_name}</td>
                 <td>{booking.adult_count}</td>
                 <td>{booking.child_count}</td>

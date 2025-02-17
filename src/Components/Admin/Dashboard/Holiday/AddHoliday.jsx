@@ -37,6 +37,8 @@ const AddHolidayModal = ({ isOpen, onClose }) => {
     adult_price: yup.number().min(0, "Cannot be negative").required("Required"),
     child_price: yup.number().min(0, "Cannot be negative").required("Required"),
     category: yup.string().required("Category is required."),
+    full_refund: yup.number().min(0, "Cannot be negative").required("Required"),
+    half_refund: yup.number().min(0, "Cannot be negative").required("Required"),
     note: yup.string(),
   });
 
@@ -59,6 +61,8 @@ const AddHolidayModal = ({ isOpen, onClose }) => {
       valid: true,
       resort: "",
       note: "",
+      full_refund: 14,
+      half_refund: 7,
     },
   });
 
@@ -146,8 +150,11 @@ const AddHolidayModal = ({ isOpen, onClose }) => {
     formData.append("child_price", data.child_price);
     formData.append("category", data.category);
     formData.append("is_holiday", true);
+    formData.append("valid", true);
     formData.append("resort", data.resort);
     formData.append("note", data.note || "");
+    formData.append("full_refund", data.full_refund);
+  formData.append("half_refund", data.half_refund);
     formData.append(
       "package_included",
       JSON.stringify(packageIncluded.filter((item) => item.trim() !== ""))
@@ -281,6 +288,43 @@ const AddHolidayModal = ({ isOpen, onClose }) => {
                 {errors.child_price && (
                   <p className="text-red-500 text-sm">
                     {errors.child_price.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex space-x-6">
+              <div className="w-1/2">
+                <label className="block text-lg font-medium text-[#023246]">
+                  Full Refund (Days):
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  {...register("full_refund")}
+                  className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                  placeholder="Enter days for full refund"
+                />
+                {errors.full_refund && (
+                  <p className="text-red-500 text-sm">
+                    {errors.full_refund.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-1/2">
+                <label className="block text-lg font-medium text-[#023246]">
+                  Half Refund (Days):
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  {...register("half_refund")}
+                  className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                  placeholder="Enter days for half refund"
+                />
+                {errors.half_refund && (
+                  <p className="text-red-500 text-sm">
+                    {errors.half_refund.message}
                   </p>
                 )}
               </div>

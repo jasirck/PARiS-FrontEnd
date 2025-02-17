@@ -7,7 +7,7 @@ import ResortDetails from "./ResortDetails";
 import ResortEdit from "./ResortEdit";
 import { div } from "framer-motion/client";
 
-function Resorts() {
+function Resorts({resortId,setResortId}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [resorts, setResorts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -34,11 +34,12 @@ function Resorts() {
         const response = await axios.get("/api/admin-resorts/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        console.log("Resorts Data:", response.data);
-
         setResorts(response.data);
         setLoading(false);
+        if(resortId){
+          setSelectedResortId(resortId);
+          setResortId(null);
+        }
       } catch (err) {
         console.error("Error fetching resorts:", err);
         setError("Failed to fetch resorts.");

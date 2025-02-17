@@ -14,7 +14,7 @@ function Package() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const token = useSelector((state) => state.auth.token);
   const [selectedPackage, setSelectedPackage] = useState(null);
-const [countdowns, setCountdowns] = useState({});
+  const [countdowns, setCountdowns] = useState({});
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -48,19 +48,18 @@ const [countdowns, setCountdowns] = useState({});
   }, [token]);
 
   useEffect(() => {
-      const interval = setInterval(() => {
-        setCountdowns((prevCountdowns) => {
-          const updatedCountdowns = {};
-          for (const id in prevCountdowns) {
-            updatedCountdowns[id] = Math.max(0, prevCountdowns[id] - 1000); // Decrease by 1 second
-          }
-          return updatedCountdowns;
-        });
-      }, 1000);
-  
-      return () => clearInterval(interval); // Clean up on component unmount
-    }, []);
+    const interval = setInterval(() => {
+      setCountdowns((prevCountdowns) => {
+        const updatedCountdowns = {};
+        for (const id in prevCountdowns) {
+          updatedCountdowns[id] = Math.max(0, prevCountdowns[id] - 1000); // Decrease by 1 second
+        }
+        return updatedCountdowns;
+      });
+    }, 1000);
 
+    return () => clearInterval(interval); // Clean up on component unmount
+  }, []);
 
   const formatTime = (milliseconds) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -70,12 +69,14 @@ const [countdowns, setCountdowns] = useState({});
     return `${hours}h ${minutes}m ${seconds}s`;
   };
 
-  const handleSelectPackage = (id) => {
+  const handleSelectPackage = (booking) => {
     if (!token) {
       setIsModal("login");
       return;
     }
-    setSelectedPackage(id);
+    setSelectedPackage(booking.package);
+    setSelectedBooking(booking);
+    
   };
 
   if (loading) {
@@ -160,6 +161,26 @@ const [countdowns, setCountdowns] = useState({});
                     Children
                   </span>
                 </div>
+
+                {/* Refund Amounts */}
+                {booking.full_refund && (
+                  <div className="flex items-center space-x-3 mt-2">
+                    <IndianRupee className="w-4 h-4 md:w-5 md:h-5 text-[#023246]" />
+                    <span className="text-sm text-[#023246]">Refund:</span>
+                    <span className="text-base md:text-lg font-medium text-[#023246]">
+                      Full Refund: ₹{booking.total_amount}
+                    </span>
+                  </div>
+                )}
+                {booking.half_refund && (
+                  <div className="flex items-center space-x-3 mt-2">
+                    <IndianRupee className="w-4 h-4 md:w-5 md:h-5 text-[#023246]" />
+                    <span className="text-sm text-[#023246]">Refund:</span>
+                    <span className="text-base md:text-lg font-medium text-[#023246]">
+                      Half Refund: ₹{(booking.total_amount / 2).toFixed(2)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Right: Status Button */}
@@ -168,23 +189,23 @@ const [countdowns, setCountdowns] = useState({});
                   <Button color="warning">Requested</Button>
                 ) : booking.conformed === "Confirmed" ? (
                   <div className="flex flex-col items-center">
-                    <Button onClick={() => handleSelectPackage(booking.package)} color="success">Details</Button>
+                    <Button onClick={() => handleSelectPackage(booking)} color="success">
+                      Details
+                    </Button>
                     <span className="text-sm text-[#023246] mt-2">
                       Starts in: {formatTime(countdowns[booking.id] || 0)}
                     </span>
                   </div>
-                ) : // <Button
-                //   color="success"
-                //   onClick={() => handleSelectPackage(booking.package)}
-                // >
-                //   Details
-                // </Button>
-                booking.conformed === "Declined" ? (
+                ) : booking.conformed === "Declined" ? (
                   <Button color="danger">Rejected</Button>
+                )  : booking.conformed === "Cancelled" ? (
+                  <Button color="danger">Cancelled</Button>
                 ) : (
                   <Button
                     color="primary"
                     onClick={() => {
+                      console.log("Selected Booking:", booking);
+                      
                       setSelectedBooking(booking);
                       setShowPayment(true);
                     }}
@@ -211,6 +232,7 @@ const [countdowns, setCountdowns] = useState({});
             isOpen={!!selectedPackage}
             onClose={() => setSelectedPackage(null)}
             packageId={selectedPackage}
+            booked_id={selectedBooking.id}
           />
         </div>
       )}

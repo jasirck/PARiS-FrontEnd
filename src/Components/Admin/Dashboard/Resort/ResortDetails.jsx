@@ -164,6 +164,8 @@ const ResortDetails = ({ resortId, closeModal }) => {
                   { label: "Base Price", value: `₹${resort.base_price}` },
                   { label: "Adult Price", value: `₹${resort.adult_price}` },
                   { label: "Child Price", value: `₹${resort.child_price}` },
+                  { label: "Full Refund", value: `${resort.full_refund} Days` },
+                  { label: "Half Refund", value: `${resort.half_refund} Days` },
                 ].map((item, index) => (
                   <div
                     key={item.label}

@@ -2,13 +2,23 @@ import React, { useState, useEffect } from "react";
 import axios from "../../../../utils/Api";
 import { motion } from "framer-motion";
 import { start } from "@cloudinary/url-gen/qualifiers/textAlignment";
+import { MapPin, Calendar, Check, X, Phone } from "lucide-react";
 import { div } from "framer-motion/client";
+import RefundSuccess from "../../PaymentResult";
+import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
-export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
+export default function ResortDetailModal({
+  isOpen,
+  onClose,
+  ResortId,
+  booked_id,
+}) {
   const [resortData, setResortData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [imageOffset, setImageOffset] = useState(0);
+  const [refundInfo, setRefundInfo] = useState(null);
+  const [refundModalOpen, setRefundModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState({
     src: "",
     alt: "",
@@ -29,7 +39,6 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
           });
           setResortData(response.data);
           console.log(response.data);
-          
 
           // Set first image as selected
           if (response.data.images?.length > 0) {
@@ -50,14 +59,37 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
     }
   }, [isOpen, ResortId]);
 
+  const handleCancelBooking = async () => {
+    try {
+      console.log("Booking ID:", booked_id);
+
+      const response = await axios.post(
+        `/api/refund-package/`,
+        { booked_id: booked_id, category: "resort" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.data.error) {
+        toast(response.data.error);
+      } else {
+        setRefundInfo(response.data);
+        setRefundModalOpen(true); // Open the refund success modal
+      }
+    } catch (error) {
+      console.error("Refund error:", error);
+      toast("Refund request failed. Please try again.");
+    }
+  };
   // Image scrolling and selection logic
   const scrollUp = () => {
-    setImageOffset(prev => Math.max(0, prev - 1));
+    setImageOffset((prev) => Math.max(0, prev - 1));
   };
 
   const scrollDown = () => {
     const images = resortData?.images || [];
-    setImageOffset(prev => 
+    setImageOffset((prev) =>
       prev < Math.max(0, images.length - 3) ? prev + 1 : prev
     );
   };
@@ -71,21 +103,20 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
     }
   };
 
-
   // Pricing calculation
   const calculatePricing = () => {
     const { base_price, adult_price, child_price } = resortData;
     return {
-      basePrice: base_price || 'N/A',
-      adultPrice: adult_price || 'N/A',
-      childPrice: child_price || 'N/A',
+      basePrice: base_price || "N/A",
+      adultPrice: adult_price || "N/A",
+      childPrice: child_price || "N/A",
     };
   };
 
   // Render content when loading
   if (isLoading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50"
@@ -99,16 +130,20 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
   if (!isOpen || !resortData) return null;
 
   const { basePrice, adultPrice, childPrice } = calculatePricing();
-  const cloudinaryBase = "https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/";
+  const cloudinaryBase =
+    "https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/";
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50"
     >
       <div className="relative bg-white w-11/12 md:w-10/12 lg:w-8/12 rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
+        {refundModalOpen && (
+          <RefundSuccess refundData={refundInfo} onClose={handleClose} />
+        )}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -121,7 +156,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
 
         <div className="p-6 md:p-8">
           {/* Resort Name */}
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-2xl md:text-3xl font-bold text-[#1E546F] mb-6 pb-4 border-b border-gray-200"
@@ -145,36 +180,39 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
                 </motion.button>
               )}
 
-              {resortData.images?.slice(imageOffset, imageOffset + 3).map((image, index) => (
-                <motion.div
-                  key={image.id}
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer group"
-                  onClick={() => handleImageClick(image)}
-                >
-                  <img
-                    src={`${cloudinaryBase}${image.image}`}
-                    alt={`Resort image ${index + 1}`}
-                    className="w-full h-[120px] object-cover rounded-lg shadow-md"
-                  />
-                </motion.div>
-              ))}
+              {resortData.images
+                ?.slice(imageOffset, imageOffset + 3)
+                .map((image, index) => (
+                  <motion.div
+                    key={image.id}
+                    whileHover={{ scale: 1.05 }}
+                    className="cursor-pointer group"
+                    onClick={() => handleImageClick(image)}
+                  >
+                    <img
+                      src={`${cloudinaryBase}${image.image}`}
+                      alt={`Resort image ${index + 1}`}
+                      className="w-full h-[120px] object-cover rounded-lg shadow-md"
+                    />
+                  </motion.div>
+                ))}
 
-              {resortData.images?.length > 3 && imageOffset < resortData.images.length - 3 && (
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
-                  onClick={scrollDown}
-                  aria-label="Scroll down images"
-                >
-                  ▼
-                </motion.button>
-              )}
+              {resortData.images?.length > 3 &&
+                imageOffset < resortData.images.length - 3 && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
+                    onClick={scrollDown}
+                    aria-label="Scroll down images"
+                  >
+                    ▼
+                  </motion.button>
+                )}
             </div>
 
             {/* Main Image */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -189,7 +227,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
           </div>
 
           {/* Resort Details */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="grid md:grid-cols-2 gap-6 bg-gray-50 rounded-3xl p-6"
@@ -201,12 +239,12 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
               </h3>
               <ul className="space-y-2 text-[#023246]">
                 <li className="flex items-center">
-                  <span className="mr-2">📍</span> 
-                  Location: {resortData.location || 'Not specified'}
+                  <span className="mr-2">📍</span>
+                  Location: {resortData.location || "Not specified"}
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2">🏊</span>
-                  Pool: {resortData.pool ? 'Available' : 'Not Available'}
+                  Pool: {resortData.pool ? "Available" : "Not Available"}
                 </li>
               </ul>
               <br />
@@ -237,7 +275,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
           </motion.div>
 
           {/* Actions */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-end items-center mt-6 space-x-4"
@@ -250,9 +288,18 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
             >
               Close
             </motion.button>
-            
-            
           </motion.div>
+          <div className="flex justify-center pt-4 space-x-4">
+            <button
+              className="px-8 py-3 bg-[#942828] text-white rounded-lg hover:bg-opacity-90 transition duration-300"
+              onClick={handleCancelBooking}
+            >
+              Cancel Booking
+            </button>
+            <button className="px-8 py-3 bg-[#023246] text-white rounded-lg hover:bg-opacity-90 transition duration-300 flex items-center">
+              <Phone size={20} className="mr-2" /> Request Callback
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>

@@ -1,3 +1,4 @@
+// PaymentForm.jsx
 
 import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
@@ -8,7 +9,7 @@ const stripePromise = loadStripe(
   "pk_test_51QUbuQBNxhTEZVvqlGJJRsFrs5tEA2Rfeec9fTp8jGo16YVz6VO8pKdCX3ORAEV5e9D9tHQlocwFfoOXQCdrvpTe00FMTnSs2d"
 );
 
-export default function PaymentForm({ amount, name,booked_id,category }) {
+export default function PaymentForm({ amount, name,booked_id,category ,onClose}) {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(true); 
   const token = useSelector((state) => state.auth.token);
@@ -55,9 +56,9 @@ export default function PaymentForm({ amount, name,booked_id,category }) {
   };
   
 
-  // Function to handle cancel action (close the modal)
   const handleCancel = () => {
     setModalVisible(false);
+    onClose();
   };
 
   return (

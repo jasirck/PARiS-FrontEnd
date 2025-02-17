@@ -72,6 +72,8 @@ const ResortEdit = ({ resortId, closeModal }) => {
       child_price: "",
       category: "",
       policy: "",
+      full_refund : 0,
+      half_refund : 0,
       images: [],
     },
   });
@@ -250,6 +252,24 @@ const ResortEdit = ({ resortId, closeModal }) => {
                   {...register("child_price")}
                   errorMessage={errors.child_price?.message}
                   placeholder="Enter child price"
+                />
+              </div>
+              <div className="flex space-x-6">
+                <Input
+                  label="Full Refund"
+                  isRequired
+                  type="number"
+                  {...register("full_refund")}
+                  errorMessage={errors.full_refund?.message}
+                  placeholder="Enter  Full Refund days"
+                />
+                <Input
+                  label="Half Refund"
+                  isRequired
+                  type="number"
+                  {...register("half_refund")}
+                  errorMessage={errors.half_refund?.message}
+                  placeholder="Enter  Half Refund days"
                 />
               </div>
 

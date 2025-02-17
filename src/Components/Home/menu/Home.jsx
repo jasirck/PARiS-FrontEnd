@@ -4,6 +4,7 @@ import axios from "../../../utils/Api";
 
 function Home() {
   const [packages, setPackages] = useState([]);
+  const [holidays, setHolidays] = useState([]);
   const [resort, setResort] = useState([]);
 
   useEffect(() => {
@@ -12,6 +13,15 @@ function Home() {
       .get("api/packages/")
       .then((response) => {
         setPackages(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching packages:", error);
+      });
+
+      axios
+      .get("api/holidays/")
+      .then((response) => {
+        setHolidays(response.data);
       })
       .catch((error) => {
         console.error("Error fetching packages:", error);
@@ -38,8 +48,8 @@ function Home() {
           resort={false}
         />
         <CardComponent
-          Offer_Name="Top Destinations"
-          Offer_List={packages}
+          Offer_Name="Top Holidays"
+          Offer_List={holidays}
           resort={false}
         />
         <CardComponent

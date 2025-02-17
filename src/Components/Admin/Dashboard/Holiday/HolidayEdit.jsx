@@ -124,6 +124,8 @@ const HolidayEditModalx = ({ isOpen, onClose, HolidayId }) => {
         setValue("category", HolidayData.holiday.category);
         setValue("resort", HolidayData.holiday.resort || ""); // Handle empty resort
         setValue("note", HolidayData.holiday.note || "");
+        setValue("full_refund", HolidayData.holiday.full_refund);
+        setValue("half_refund", HolidayData.holiday.half_refund);
 
         // Initialize image previews only if days_Holiday is an array
         const initialPreviews = {};
@@ -213,6 +215,9 @@ const HolidayEditModalx = ({ isOpen, onClose, HolidayId }) => {
     formData.append("category", data.category);
     formData.append("resort", data.resort);
     formData.append("note", data.note || "");
+    formData.append("valid", data.valid);
+    formData.append("full_refund", data.full_refund);
+    formData.append("half_refund", data.half_refund);
     formData.append(
       "package_included",
       JSON.stringify(HolidayIncluded.filter((item) => item.trim() !== ""))
@@ -229,8 +234,10 @@ const HolidayEditModalx = ({ isOpen, onClose, HolidayId }) => {
             // Handle image upload logic
             const uploadedImage = await uploadToCloudinary(dayPlan.place_photo);
             const imageUrl = uploadedImage.secure_url;
-            const imageId = imageUrl.match(/\/([^\/]+)\.jpg/)[1]; // Extract image ID
+            const imageId = imageUrl.match(/\/([^\/]+)\.jpg/)[1]; 
             dayPlan.place_photo = imageId;
+            console.log(imageId);
+            
           } catch (error) {
             console.error("Error uploading image:", error.message);
             alert(`Failed to upload image for Day ${dayPlan.day}.`);
@@ -359,6 +366,44 @@ const HolidayEditModalx = ({ isOpen, onClose, HolidayId }) => {
                   )}
                 </div>
               </div>
+              <div className="flex space-x-6">
+                <div className="w-1/3">
+                  <label className="block text-lg font-medium text-[#023246]">
+                    Full Refund:
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    {...register("full_refund")}
+                    className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                    placeholder="Enter base price"
+                  />
+                  {errors.full_refund && (
+                    <p className="text-red-500 text-sm">
+                      {errors.full_refund.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="w-1/3">
+                  <label className="block text-lg font-medium text-[#023246]">
+                    Half Refund:
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    {...register("half_refund")}
+                    className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                    placeholder="Enter adult price"
+                  />
+                  {errors.half_refund && (
+                    <p className="text-red-500 text-sm">
+                      {errors.half_refund.message}
+                    </p>
+                  )}
+                </div>
+
+              </div>
 
               <div className="flex space-x-6">
                 <div className="w-1/2">
@@ -391,6 +436,19 @@ const HolidayEditModalx = ({ isOpen, onClose, HolidayId }) => {
                   )}
                 </div>
               </div>
+              <div className="w-1/2">
+                  <label className=" text-lg font-medium text-[#023246]">
+                    Valid:
+                  </label>
+                  <input
+                    type="checkbox"
+                    {...register("valid")}
+                    className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                  />
+                  {errors.end && (
+                    <p className="text-red-500 text-sm">{errors.end.message}</p>
+                  )}
+                </div>
 
               <div>
                 <label className="block text-lg font-medium text-[#023246]">
@@ -555,7 +613,6 @@ const HolidayEditModalx = ({ isOpen, onClose, HolidayId }) => {
                       />
                       {imagePreviews[index] && (
                         <img
-                          // src={`https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${dayPlan.place_photo}`}
                           src={imagePreviews[index]}
                           alt={`Day ${dayPlan.day} Photo`}
                           className="mt-2 w-32 h-32 object-cover rounded-lg"

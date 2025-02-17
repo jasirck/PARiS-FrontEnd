@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
 
 
-function Packages() {
+function Packages({ packageId, setPackageId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [packages, setPackages] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -30,7 +30,7 @@ function Packages() {
 
   // Fetch packages data from the backend
   useEffect(() => {
-    console.log(token);
+    console.log(packageId);
     
     const fetchPackages = async () => {
       try {
@@ -47,6 +47,10 @@ function Packages() {
     };
 
     fetchPackages();
+    if (packageId) {
+      openViewModal(packageId);
+      setPackageId(null);
+    }
   }, [showAddForm]);
 
   const openViewModal = (packageId) => {

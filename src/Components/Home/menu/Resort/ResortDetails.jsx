@@ -140,9 +140,9 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
             <div className="relative space-y-4 hidden md:block">
               {imageOffset > 0 && (
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 1 }}
+                  className="absolute -top-2 left-1/2 h-8 w-8  z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
                   onClick={scrollUp}
                   aria-label="Scroll up images"
                 >
@@ -167,9 +167,9 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
 
               {resortData.images?.length > 3 && imageOffset < resortData.images.length - 3 && (
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
-                  className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
+                  className="absolute -bottom-2 h-8 w-8 left-1/2  z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
                   onClick={scrollDown}
                   aria-label="Scroll down images"
                 >

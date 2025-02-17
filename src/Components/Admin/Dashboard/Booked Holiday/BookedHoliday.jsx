@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
 
-function HolidayBooking() {
+function HolidayBooking({handletrackid}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookedHolidays, setBookedHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -117,7 +117,7 @@ function HolidayBooking() {
                 <td className=" overflow-x-auto whitespace-nowrap">
                   {booking.user_phone_number || booking.user_email}
                 </td>
-                <td>{booking.package}</td>
+                <td onClick={() => handletrackid('Holiday','/admin/holiday',booking.package,'holiday')} className="ml-8">{booking.package}</td>
                 <td>{booking.package_name}</td>
                 <td>{booking.adult_count}</td>
                 <td>{booking.child_count}</td>

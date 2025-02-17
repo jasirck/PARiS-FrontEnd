@@ -20,6 +20,5 @@ createRoot(document.getElementById("root")).render(
         <App />
       </NextUIProvider>
     </GoogleOAuthProvider>
-    ,
   </Provider>
 );

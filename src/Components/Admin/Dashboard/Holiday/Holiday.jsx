@@ -8,7 +8,7 @@ import HolidayDetailsModal from "./HolidayDetails";
 import HolidayEditModal from "./HolidayEdit";
 
 
-function Holidays() {
+function Holidays({holidayId,setHolidayId}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [Holidays, setHolidays] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -47,6 +47,10 @@ function Holidays() {
     };
 
     fetchHolidays();
+    if(holidayId) {
+      openViewModal(holidayId)
+      setHolidayId(null)
+    }
   }, [showAddForm]);
 
   const openViewModal = (HolidayId) => {

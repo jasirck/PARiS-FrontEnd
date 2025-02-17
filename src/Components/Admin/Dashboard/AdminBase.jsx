@@ -7,19 +7,28 @@ import Users from "./User/Users";
 import Resorts from "./Resort/Resort";
 import Holiday from "./Holiday/Holiday";
 import Category from "./Category/PackageCategory";
-import ResortCategory from "./Category/ResortCategory";
+import ResortCategory from "./Category/ResortCategory copy";
 import { logout } from "../../../Components/Toolkit/Slice/authSlice";
 import { Button } from "@nextui-org/react";
 import HolidayBooking from "./Booked Holiday/BookedHoliday";
 import PackageBooking from "./Booked Package/BookedPackage";
 import { a } from "framer-motion/client";
 import BookedResort from "./Booked Resort/BookedResort";
+import VisaCategory from "./Category/VisaCategory";
+import Visa from "./Visa/Visa";
+import BookedVisa from "./Booked VIsa/BookedVIsa";
+import AdminChat from "./Chat";
+import { IoChatbubblesSharp } from "react-icons/io5";
 
 function AdminBase() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [activeButton, setActiveButton] = useState("Dashboard");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, is_admin, profile, token } = useSelector((state) => state.auth);
+  const [packageId, setPackageId] = useState(null);
+  const [resortId, setResortId] = useState(null);
+  const [holidayId, setHolidayId] = useState(null);
+  const [visaId, setVisaId] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -27,10 +36,12 @@ function AdminBase() {
     if (is_admin === false || !token) {
       console.log(is_admin, token);
       navigate("/adminlogin");
-    } 
+    }
     const path = window.location.pathname;
     const firstWordAfterAdmin = path.split("/")[2];
-    switch (firstWordAfterAdmin) { 
+    console.log("firstWordAfterAdmin", firstWordAfterAdmin);
+    
+    switch (firstWordAfterAdmin) {
       case "dashboard":
         setActiveButton("Dashboard");
         break;
@@ -45,6 +56,9 @@ function AdminBase() {
         break;
       case "holiday":
         setActiveButton("Holiday");
+        break;
+      case "visa":
+        setActiveButton("Visa");
         break;
       case "booked-holiday":
         setActiveButton("Booked Holiday");
@@ -64,12 +78,13 @@ function AdminBase() {
       case "resort-category":
         setActiveButton("Resort Category");
         break;
+      case "visa-category":
+        setActiveButton("Visa Category");
+      case "admin-chat":
+        setActiveButton(" Admin Chat");
       default:
         console.warn(`Unknown route: ${firstWordAfterAdmin}`);
     }
-    
-    
-    
   }, [is_admin, token, navigate]);
 
   const handleLogout = useCallback(() => {
@@ -78,12 +93,25 @@ function AdminBase() {
   }, [navigate]);
 
   const handleButtonClick = (button, path) => {
-    setActiveButton(button);    
+    setActiveButton(button);
+    navigate(path);
+  };
+  const handletrackid = (page, path, id, type) => {
+    handleButtonClick(page, page);
+    if (type === "package") {
+      setPackageId(id);
+    } else if (type === "resort") {
+      setResortId(id);
+    } else if (type === "holiday") {
+      setHolidayId(id);
+    } else if (type === "visa") {
+      setVisaId(id);
+    }
     navigate(path);
   };
 
   return (
-    <div className="flex h-screen  bg-[#eaf1f4]">
+    <div className="flex   bg-[#eaf1f4]">
       {/* Sidebar */}
       <aside
         className={`fixed top-0 h-full w-64 bg-[#F6F6F6] shadow-lg transition-transform transform ${
@@ -145,6 +173,19 @@ function AdminBase() {
               Resort Category
             </Button>
 
+            <Button
+              className={` px-4 py-2 text-lg font-medium text-left ${
+                activeButton === "Visa Category"
+                  ? "bg-[#565656] text-white"
+                  : "bg-transparent text-gray-700"
+              } hover:bg-[#4a4a4a] hover:text-white rounded-lg transition-all`}
+              onClick={() =>
+                handleButtonClick("Resort Category", "/admin/visa-category")
+              }
+            >
+              Visa Category
+            </Button>
+
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-500">Services</p>
               <div>
@@ -204,10 +245,7 @@ function AdminBase() {
               <div>
                 <Button
                   onClick={() =>
-                    handleButtonClick(
-                      "Booked Holiday",
-                      "/admin/booked-holiday"
-                    )
+                    handleButtonClick("Booked Holiday", "/admin/booked-holiday")
                   }
                   className={`px-4 py-2 text-lg font-medium text-left ${
                     activeButton === "Booked Holiday"
@@ -269,64 +307,103 @@ function AdminBase() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:ml-64">
+      <div className="flex-1 flex flex-col lg:ml-64 h-full">
         <header className="fixed top-0 left-0 right-0 bg-[#eaf1f4] shadow z-10 lg:left-64">
           <div className="flex items-center justify-between px-4 py-4 lg:px-6">
-            <button
-              className="lg:hidden text-gray-700 focus:outline-none"
-              onClick={() => setSidebarOpen(!isSidebarOpen)}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              </svg>
-            </button>
+            {/* Left Section: Placeholder for potential back button or menu */}
+            <div></div>
+
+            {/* Middle Section: Page Title */}
             <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
               {activeButton}
             </h1>
-            <div
-              className="relative"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              <div className="cursor-pointer text-gray-700">JASIR</div>
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg">
-                  <Button
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </Button>
+
+            {/* Right Section: Chat Icon + Profile Dropdown */}
+            <div className="flex items-center gap-4">
+              {/* Chat Icon */}
+              <div
+                className="bg-[#287094] text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-[#1e5674]"
+                onClick={() => navigate("/admin/admin-chat")}
+              >
+                <IoChatbubblesSharp className="text-2xl" />
+              </div>
+
+              {/* Profile Dropdown */}
+              <div className="relative">
+                <div
+                  className="cursor-pointer text-gray-700"
+                  onClick={() => {
+                    setDropdownOpen(!dropdownOpen);
+                  }}
+                >
+                  {user}
                 </div>
-              )}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg">
+                    <Button
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </header>
+        <div className="h-screen flex flex-col">
+  <main className="flex-1 mt-16 min-h-80 overflow-auto p-4 lg:p-6">
 
-        <main className="flex-1 mt-16 overflow-auto p-4 lg:p-6">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/packages" element={<Packages />} />
-            <Route path="/holiday" element={<Holiday />} />
+            <Route
+              path="/packages"
+              element={
+                <Packages packageId={packageId} setPackageId={setPackageId} />
+              }
+            />
+            <Route
+              path="/holiday"
+              element={
+                <Holiday holidayId={holidayId} setHolidayId={setHolidayId} />
+              }
+            />
             <Route path="/users" element={<Users />} />
-            <Route path="/resort" element={<Resorts />} />
+            <Route
+              path="/resort"
+              element={
+                <Resorts resortId={resortId} setResortId={setResortId} />
+              }
+            />
+            <Route
+              path="/visa"
+              element={<Visa visaId={visaId} setVisaId={setVisaId} />}
+            />
             <Route path="/package-category" element={<Category />} />
             <Route path="/resort-category" element={<ResortCategory />} />
-            <Route path="/booked-holiday" element={<HolidayBooking />} />
-            <Route path="/booked-packages" element={<PackageBooking />} />
-            <Route path="/booked-resort" element={<BookedResort/>} />
+            <Route path="/visa-category" element={<VisaCategory />} />
+            <Route
+              path="/booked-holiday"
+              element={<HolidayBooking handletrackid={handletrackid} />}
+            />
+            <Route
+              path="/booked-packages"
+              element={<PackageBooking handletrackid={handletrackid} />}
+            />
+            <Route
+              path="/booked-resort"
+              element={<BookedResort handletrackid={handletrackid} />}
+            />
+            <Route
+              path="/booked-visa"
+              element={<BookedVisa handletrackid={handletrackid} />}
+            />
+
+            <Route path="/admin-chat" element={<AdminChat  />} />
           </Routes>
         </main>
+        </div>
       </div>
 
       {isSidebarOpen && (

@@ -89,6 +89,18 @@ const PackageDetailsModal = ({ packageId, isOpen, closeModal }) => {
           </p>
         </div>
         <div className="bg-gray-100 p-4 rounded-md">
+          <p className="text-sm text-gray-500">Full Refund:</p>
+          <p className="text-lg font-semibold text-gray-800">
+            {packageData.full_refund } Days
+          </p>
+        </div>
+        <div className="bg-gray-100 p-4 rounded-md">
+          <p className="text-sm text-gray-500">Half Refund:</p>
+          <p className="text-lg font-semibold text-gray-800">
+            {packageData.half_refund } Days
+          </p>
+        </div>
+        <div className="bg-gray-100 p-4 rounded-md">
           <p className="text-sm text-gray-500">Valid:</p>
           <p className="text-lg font-semibold text-gray-800">
             {packageData.valid ? "Yes" : "No"}

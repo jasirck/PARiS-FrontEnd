@@ -56,6 +56,8 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
       valid: true,
       resort: "",
       note: "",
+      full_refund : 0,
+      half_refund : 0,
     },
   });
 
@@ -124,6 +126,8 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
         setValue("category", packageData.package.category);
         setValue("resort", packageData.package.resort || ""); // Handle empty resort
         setValue("note", packageData.package.note || "");
+        setValue("full_refund", packageData.package.full_refund);
+        setValue("half_refund", packageData.package.half_refund);
 
         // Initialize image previews only if days_package is an array
         const initialPreviews = {};
@@ -214,6 +218,8 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
     formData.append("category", data.category);
     formData.append("resort", data.resort);
     formData.append("note", data.note || "");
+    formData.append("full_refund", data.full_refund);
+    formData.append("half_refund", data.half_refund);
     formData.append(
       "package_included",
       JSON.stringify(packageIncluded.filter((item) => item.trim() !== ""))
@@ -359,6 +365,47 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
                     </p>
                   )}
                 </div>
+                
+              </div>
+
+
+              <div className="flex space-x-6">
+                <div className="w-1/3">
+                  <label className="block text-lg font-medium text-[#023246]">
+                    Full Refund:
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    {...register("full_refund")}
+                    className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                    placeholder="Enter base price"
+                  />
+                  {errors.full_refund && (
+                    <p className="text-red-500 text-sm">
+                      {errors.full_refund.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="w-1/3">
+                  <label className="block text-lg font-medium text-[#023246]">
+                    Half Refund:
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    {...register("half_refund")}
+                    className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                    placeholder="Enter adult price"
+                  />
+                  {errors.half_refund && (
+                    <p className="text-red-500 text-sm">
+                      {errors.half_refund.message}
+                    </p>
+                  )}
+                </div>
+
               </div>
 
               <div className="flex space-x-6">

@@ -8,6 +8,8 @@ import axios from "../../../utils/Api";
 import Holiday from "./Holiday/Holiday";
 import Package from "./Packages/Packages";
 import Resort from "./Resort/Resort";
+import Flight from "./Flight/Flight";
+import Visa from "./Visa/Visa";
 
 // Profile Component
 function Profile() {
@@ -226,8 +228,8 @@ function Profile() {
             <Route path="/holiday" element={<Holiday />} />
             <Route path="/packages" element={<Package />} />
             <Route path="/resort" element={<Resort/>} />
-            <Route path="/flight" element={<div>Flight Content</div>} />
-            <Route path="/visa" element={<div>Visa Content</div>} />
+            <Route path="/flight" element={<Flight />} />
+            <Route path="/visa" element={<Visa />} />
           </Routes>
           
         </div>

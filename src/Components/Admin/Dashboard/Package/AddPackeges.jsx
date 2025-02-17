@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useSelector } from "react-redux";
-import {  toast } from 'sonner'
+import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
-  
+
 const AddPackageModal = ({ isOpen, onClose }) => {
   const [resorts, setResorts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -36,6 +36,8 @@ const AddPackageModal = ({ isOpen, onClose }) => {
     adult_price: yup.number().min(0, "Cannot be negative").required("Required"),
     child_price: yup.number().min(0, "Cannot be negative").required("Required"),
     category: yup.string().required("Category is required."),
+    full_refund: yup.number().min(0, "Cannot be negative").required("Required"),
+    half_refund: yup.number().min(0, "Cannot be negative").required("Required"),
     note: yup.string(),
   });
 
@@ -58,6 +60,8 @@ const AddPackageModal = ({ isOpen, onClose }) => {
       valid: true,
       resort: "",
       note: "",
+      full_refund: 14,
+      half_refund: 7,
     },
   });
 
@@ -105,14 +109,12 @@ const AddPackageModal = ({ isOpen, onClose }) => {
 
   const handleImageUpload = (index, files) => {
     if (!files || files.length === 0) return;
-  
+
     const file = files[0];
     const updatedDays = [...dayPlans];
-    updatedDays[index].place_photo = file; 
+    updatedDays[index].place_photo = file;
     setDayPlans(updatedDays);
   };
-  
-  
 
   const handleAddToIncluded = () => {
     setPackageIncluded([...packageIncluded, ""]);
@@ -137,9 +139,9 @@ const AddPackageModal = ({ isOpen, onClose }) => {
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("name", data.name);
-    formData.append("start", data.start.toISOString().split('T')[0]);
-    formData.append("end", data.end.toISOString().split('T')[0]);
-    formData.append("days", dayPlans.length); 
+    formData.append("start", data.start.toISOString().split("T")[0]);
+    formData.append("end", data.end.toISOString().split("T")[0]);
+    formData.append("days", dayPlans.length);
     formData.append("base_price", data.base_price);
     formData.append("adult_price", data.adult_price);
     formData.append("child_price", data.child_price);
@@ -147,6 +149,8 @@ const AddPackageModal = ({ isOpen, onClose }) => {
     formData.append("category", data.category);
     formData.append("resort", data.resort);
     formData.append("note", data.note || "");
+    formData.append("full_refund", data.full_refund);
+  formData.append("half_refund", data.half_refund);
     formData.append(
       "package_included",
       JSON.stringify(packageIncluded.filter((item) => item.trim() !== ""))
@@ -155,7 +159,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
       "package_excluded",
       JSON.stringify(packageExcluded.filter((item) => item.trim() !== ""))
     );
-  
+
     // Handle image upload for each dayPlan during form submission
     const updatedDays = await Promise.all(
       dayPlans.map(async (dayPlan) => {
@@ -173,11 +177,11 @@ const AddPackageModal = ({ isOpen, onClose }) => {
         return dayPlan;
       })
     );
-  
+
     formData.append("days_package", JSON.stringify(updatedDays));
-  
+
     console.log("Form Submitted: ", Object.fromEntries(formData.entries()));
-  
+
     try {
       setLoading(true);
       await axios.post("/api/admin-packages/", formData, {
@@ -187,23 +191,20 @@ const AddPackageModal = ({ isOpen, onClose }) => {
         },
       });
       console.log("Package added successfully!");
-      toast.success('Package added successfully!')
+      toast.success("Package added successfully!");
       onClose();
     } catch (error) {
       console.error(
         "Error adding package:",
         error.response ? error.response.data : error.message
       );
-      toast.error('Event has not been created')
+      toast.error("Event has not been created");
       alert("Failed to save package. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-  
 
-
-  
   if (!isOpen) return null;
 
   return (
@@ -284,6 +285,43 @@ const AddPackageModal = ({ isOpen, onClose }) => {
                 )}
               </div>
             </div>
+            <div className="flex space-x-6">
+              <div className="w-1/2">
+                <label className="block text-lg font-medium text-[#023246]">
+                  Full Refund (Days):
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  {...register("full_refund")}
+                  className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                  placeholder="Enter days for full refund"
+                />
+                {errors.full_refund && (
+                  <p className="text-red-500 text-sm">
+                    {errors.full_refund.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-1/2">
+                <label className="block text-lg font-medium text-[#023246]">
+                  Half Refund (Days):
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  {...register("half_refund")}
+                  className="w-full p-3 border-2 border-[#D4D4CE] rounded-lg focus:ring-2 focus:ring-[#287094]"
+                  placeholder="Enter days for half refund"
+                />
+                {errors.half_refund && (
+                  <p className="text-red-500 text-sm">
+                    {errors.half_refund.message}
+                  </p>
+                )}
+              </div>
+            </div>
 
             <div className="flex space-x-6">
               <div className="w-1/2">
@@ -313,7 +351,6 @@ const AddPackageModal = ({ isOpen, onClose }) => {
                   <p className="text-red-500 text-sm">{errors.end.message}</p>
                 )}
               </div>
-              
             </div>
 
             <div>
@@ -482,12 +519,14 @@ const AddPackageModal = ({ isOpen, onClose }) => {
             <Button
               type="Button"
               onClick={() => setTimeout(onClose, 300)}
-              className="w-full sm:w-auto bg-[#023246] text-white p-3 rounded-lg mt-6 sm:mr-4 hover:bg-[#287094]">
+              className="w-full sm:w-auto bg-[#023246] text-white p-3 rounded-lg mt-6 sm:mr-4 hover:bg-[#287094]"
+            >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="w-full sm:w-auto bg-[#287094] text-white p-3 rounded-lg mt-6 sm:ml-4 hover:bg-[#023246]">
+              className="w-full sm:w-auto bg-[#287094] text-white p-3 rounded-lg mt-6 sm:ml-4 hover:bg-[#023246]"
+            >
               {loading ? "Saving..." : "Save Package"}
             </Button>
           </div>
@@ -497,326 +536,3 @@ const AddPackageModal = ({ isOpen, onClose }) => {
   );
 };
 export default AddPackageModal;
-
-
-
-// import React, { useState, useEffect } from "react";
-// import { Form, Input, Button, Select, SelectItem, Textarea } from "@nextui-org/react";
-// import axios from "../../../../utils/Api";
-// import { uploadToCloudinary } from "../../../../utils/cloudinaryUtils";
-// import { useSelector } from "react-redux";
-// import { toast } from 'sonner';
-
-// const AddPackageModal = ({ isOpen, onClose }) => {
-//   const [resorts, setResorts] = useState([]);
-//   const [categories, setCategories] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [dayPlans, setDayPlans] = useState([
-//     { day: 1, place_name: "", activity: "", place_photo: "", resort: "" },
-//   ]);
-//   const [packageIncluded, setPackageIncluded] = useState([""]);
-//   const [packageExcluded, setPackageExcluded] = useState([""]);
-//   const [errorMessage, setErrorMessage] = useState("");
-//   const { token } = useSelector((state) => state.auth);
-
-//   useEffect(() => {
-//     setLoading(true);
-//     const fetchData = async () => {
-//       try {
-//         const [resortsData, categoriesData] = await Promise.all([
-//           axios.get("/api/resorts/"),
-//           axios.get("/api/package-categories/"),
-//         ]);
-//         setResorts(resortsData.data || []);
-//         setCategories(categoriesData.data || []);
-//       } catch (error) {
-//         console.error("Error fetching data:", error);
-//         setErrorMessage("Failed to fetch resorts or categories. Please try again.");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetchData();
-//   }, []);
-
-//   const handleAddDay = () => {
-//     setDayPlans([
-//       ...dayPlans,
-//       {
-//         day: dayPlans.length + 1,
-//         place_name: "",
-//         activity: "",
-//         place_photo: "",
-//         resort: "",
-//       },
-//     ]);
-//   };
-
-//   const handleDayChange = (index, field, value) => {
-//     const updatedDays = [...dayPlans];
-//     updatedDays[index][field] = value;
-//     setDayPlans(updatedDays);
-//   };
-
-//   const handleImageUpload = (index, files) => {
-//     if (!files || files.length === 0) return;
-//     const file = files[0];
-//     const updatedDays = [...dayPlans];
-//     updatedDays[index].place_photo = file;
-//     setDayPlans(updatedDays);
-//   };
-
-//   const handleIncludedChange = (index, value) => {
-//     const updatedIncluded = [...packageIncluded];
-//     updatedIncluded[index] = value;
-//     setPackageIncluded(updatedIncluded);
-//   };
-
-//   const handleExcludedChange = (index, value) => {
-//     const updatedExcluded = [...packageExcluded];
-//     updatedExcluded[index] = value;
-//     setPackageExcluded(updatedExcluded);
-//   };
-
-//   const formData = new FormData();
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const formData = new FormData(e.currentTarget);
-//     setLoading(true);
-
-//     try {
-//       // Handle day plans and images
-//       const updatedDays = await Promise.all(
-//         dayPlans.map(async (dayPlan) => {
-//           if (dayPlan.place_photo instanceof File) {
-//             const uploadedImage = await uploadToCloudinary(dayPlan.place_photo);
-//             return {
-//               ...dayPlan,
-//               place_photo: uploadedImage.secure_url.match(/\/([^\/]+)\.jpg/)[1]
-//             };
-//           }
-//           return dayPlan;
-//         })
-//       );
-
-//       // Prepare form data
-//       const packageData = {
-//         name: formData.get("name"),
-//         start: formData.get("start"),
-//         end: formData.get("end"),
-//         days: dayPlans.length,
-//         base_price: formData.get("base_price"),
-//         adult_price: formData.get("adult_price"),
-//         child_price: formData.get("child_price"),
-//         category: formData.get("category"),
-//         resort: formData.get("resort"),
-//         note: formData.get("note") || "",
-//         package_included: packageIncluded.filter(item => item.trim() !== ""),
-//         package_excluded: packageExcluded.filter(item => item.trim() !== ""),
-//         days_package: JSON.stringify(updatedDays)
-//       };
-
-//       await axios.post("/api/admin-packages/", packageData, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       toast.success('Package added successfully!');
-//       onClose();
-//     } catch (error) {
-//       console.error("Error adding package:", error);
-//       toast.error('Failed to create package');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   if (!isOpen) return null;
-
-//   return (
-//     <div className="fixed inset-0 flex items-center justify-center bg-[#1f2e358e] bg-opacity-75 z-50">
-//       <div className="bg-[#F6F6F6] rounded-lg shadow-xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-//         <h2 className="text-3xl font-bold text-center text-[#287094] mb-6">
-//           Add New Package
-//         </h2>
-        
-//         <Form className="space-y-6" onSubmit={handleSubmit}>
-//           <Input
-//             isRequired
-//             label="Package Name"
-//             name="name"
-//             placeholder="Enter package name"
-//             labelPlacement="outside"
-//           />
-
-//           <div className="flex gap-4">
-//             <Input
-//               isRequired
-//               type="number"
-//               label="Base Price"
-//               name="base_price"
-//               placeholder="Enter base price"
-//               labelPlacement="outside"
-//               min={0}
-//             />
-//             <Input
-//               isRequired
-//               type="number"
-//               label="Adult Price"
-//               name="adult_price"
-//               placeholder="Enter adult price"
-//               labelPlacement="outside"
-//               min={0}
-//             />
-//             <Input
-//               isRequired
-//               type="number"
-//               label="Child Price"
-//               name="child_price"
-//               placeholder="Enter child price"
-//               labelPlacement="outside"
-//               min={0}
-//             />
-//           </div>
-
-//           <div className="flex gap-4">
-//             <Input
-//               isRequired
-//               type="date"
-//               label="Start Date"
-//               name="start"
-//               labelPlacement="outside"
-//             />
-//             <Input
-//               isRequired
-//               type="date"
-//               label="End Date"
-//               name="end"
-//               labelPlacement="outside"
-//             />
-//           </div>
-
-//           <Select
-//             isRequired
-//             label="Category"
-//             name="category"
-//             labelPlacement="outside"
-//           >
-//             {categories.map((category) => (
-//               <SelectItem key={category.id} value={category.id}>
-//                 {category.name}
-//               </SelectItem>
-//             ))}
-//           </Select>
-
-//           {/* Package Included Section */}
-//           <div className="space-y-4">
-//             <label className="block text-lg font-medium">Package Included:</label>
-//             {packageIncluded.map((item, index) => (
-//               <Input
-//                 key={index}
-//                 value={item}
-//                 onChange={(e) => handleIncludedChange(index, e.target.value)}
-//                 placeholder={`Include point ${index + 1}`}
-//               />
-//             ))}
-//             <Button
-//               color="primary"
-//               onClick={() => setPackageIncluded([...packageIncluded, ""])}
-//             >
-//               Add Another Point
-//             </Button>
-//           </div>
-
-//           {/* Package Excluded Section */}
-//           <div className="space-y-4">
-//             <label className="block text-lg font-medium">Package Excluded:</label>
-//             {packageExcluded.map((item, index) => (
-//               <Input
-//                 key={index}
-//                 value={item}
-//                 onChange={(e) => handleExcludedChange(index, e.target.value)}
-//                 placeholder={`Exclude point ${index + 1}`}
-//               />
-//             ))}
-//             <Button
-//               color="primary"
-//               onClick={() => setPackageExcluded([...packageExcluded, ""])}
-//             >
-//               Add Another Point
-//             </Button>
-//           </div>
-
-//           <Textarea
-//             label="Additional Notes"
-//             name="note"
-//             placeholder="Enter any additional notes here"
-//             labelPlacement="outside"
-//           />
-
-//           {/* Day Plans Section */}
-//           <div className="space-y-6">
-//             <h3 className="text-2xl font-semibold">Day Plans</h3>
-//             {dayPlans.map((dayPlan, index) => (
-//               <div key={index} className="space-y-4 p-4 border rounded-lg">
-//                 <Input
-//                   label={`Day ${dayPlan.day} - Place Name`}
-//                   value={dayPlan.place_name}
-//                   onChange={(e) => handleDayChange(index, "place_name", e.target.value)}
-//                   placeholder="Enter place name"
-//                   labelPlacement="outside"
-//                 />
-//                 <br />
-//                 <Input
-//                   label="Activity"
-//                   value={dayPlan.activity}
-//                   onChange={(e) => handleDayChange(index, "activity", e.target.value)}
-//                   placeholder="Enter activity"
-//                   labelPlacement="outside"
-//                 />
-//                 <br />
-//                 <Select
-//                   label="Resort"
-//                   value={dayPlan.resort}
-//                   onChange={(e) => handleDayChange(index, "resort", e.target.value)}
-//                   labelPlacement="outside"
-//                 >
-//                   {resorts.map((resort) => (
-//                     <SelectItem key={resort.id} value={resort.id}>
-//                       {resort.name}
-//                     </SelectItem>
-//                   ))}
-//                 </Select>
-
-//                 <Input
-//                   type="file"
-//                   label="Place Photo"
-//                   onChange={(e) => handleImageUpload(index, e.target.files)}
-//                   accept="image/*"
-//                   labelPlacement="outside"
-//                 />
-//               </div>
-//             ))}
-//             <Button color="primary" onClick={handleAddDay}>
-//               Add Day Plan
-//             </Button>
-//           </div>
- 
-//           <div className="w-full flex justify-between gap-4">
-//             <Button color="danger" className="w-[15%]"  onClick={onClose} fullWidth>
-//               Cancel
-//             </Button>
-//             <Button color="primary" className="w-[15%] text-end" type="submit" fullWidth disabled={loading}>
-//               {loading ? "Saving..." : "Save Package"}
-//             </Button>
-//           </div>
-//         </Form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AddPackageModal;    

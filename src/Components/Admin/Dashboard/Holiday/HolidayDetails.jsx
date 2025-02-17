@@ -85,6 +85,18 @@ const HolidayDetailsModal = ({ HolidayId, isOpen, closeModal }) => {
           <p className="text-sm text-gray-500">End Date:</p>
           <p className="text-lg font-semibold text-gray-800">{Holiday.end}</p>
         </div>
+        <div className="bg-gray-100 p-4 rounded-md">
+          <p className="text-sm text-gray-500">Full Refund:</p>
+          <p className="text-lg font-semibold text-gray-800">{Holiday.full_refund}Days</p>
+        </div>
+        <div className="bg-gray-100 p-4 rounded-md">
+          <p className="text-sm text-gray-500">Half Refund:</p>
+          <p className="text-lg font-semibold text-gray-800">{Holiday.full_refund} Days</p>
+        </div>
+        <div className="bg-gray-100 p-4 rounded-md">
+          <p className="text-sm text-gray-500">Valid:</p>
+          <p className="text-lg font-semibold text-gray-800">{Holiday.valid ? "Yes" : "No"}</p>
+        </div>
       </div>
 
       <h3 className="text-xl font-semibold text-gray-800 mb-2">Inclusions</h3>
