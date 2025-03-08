@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "../../../../utils/Api";
 import HolidaysDeteils from "./HolidaysDeteils";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {setHomeHoliday} from "../../../Toolkit/Slice/apiHomeSlice"; 
+
 
 function Holiday({ setIsModal }) {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -10,19 +12,27 @@ function Holiday({ setIsModal }) {
   const [Holidays, setHolidays] = useState([]);
   const [selectedHoliday, setSelectedHoliday] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false); // To manage loading state
+  const [loading, setLoading] = useState(false); 
+  const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
+  const homeData = useSelector((state) => state.api.home);
 
   useEffect(() => {
     const fetchHolidays = async () => {
-      setLoading(true);  // Set loading state to true
-      try {
-        const response = await axios.get("/api/holidays/");
-        setHolidays(response.data);
-      } catch (error) {
-        console.error("Error fetching Holidays:", error);
-      } finally {
-        setLoading(false);  // Set loading state to false once the data is fetched
+      setLoading(true);  
+
+      if (!homeData.holiday) {
+        try {
+          const response = await axios.get("/api/holidays/");
+          setHolidays(response.data);
+          dispatch(setHomeHoliday(response.data));
+          setLoading(false); 
+        } catch (error) {
+          console.error("Error fetching Holidays:", error);
+        }
+      } else {
+        setHolidays(homeData.holiday);
+        setLoading(false); 
       }
     };
 
@@ -41,7 +51,7 @@ function Holiday({ setIsModal }) {
           ...fetchedCategories,
         ];
 
-        setCategories(allCategories);
+        setCategories(allCategories);        
       } catch (error) {
         console.error("Error fetching categories:", error);
       }

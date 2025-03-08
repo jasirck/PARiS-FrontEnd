@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import TicketModal from "./TicketModal";
 import moment from "moment";
+import { setProfileFlight } from "../../../Toolkit/Slice/apiHomeSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const BookedFlightDetails = () => {
   const [bookedFlights, setBookedFlights] = useState([]);
@@ -12,17 +15,44 @@ const BookedFlightDetails = () => {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const profile_flight = useSelector((state) => state.api.profile_flight);
 
   useEffect(() => {
     const fetchBookedFlights = async () => {
-      try {
-        const response = await axios.get("/api/booked/flights/");
-        console.log("Booked Flights:", response.data);
-        setBookedFlights(response.data);
-      } catch (error) {
-        toast.error("Failed to load flight bookings");
-        console.error("Error fetching booked flights:", error);
-      } finally {
+      if (!profile_flight) {
+        setLoading(true); // Start loading before the API call
+      
+        axios
+          .get("/api/booked/flights/", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((response) => {
+            dispatch(setProfileFlight(response.data));
+            setBookedFlights(response.data);
+      
+            // const initialCountdowns = {};
+            // response.data.forEach((booking) => {
+            //   if (booking.conformed === "Confirmed") {
+            //     const targetTime = new Date(booking.date).getTime();
+            //     const now = new Date().getTime();
+            //     const timeLeft = Math.max(0, targetTime - now); 
+            //     initialCountdowns[booking.id] = timeLeft;
+            //   }
+            // });
+      
+            // setCountdowns(initialCountdowns);
+            setLoading(false); 
+          })
+          .catch((error) => {
+            console.error("Error fetching Holiday:", error);
+            setError("Failed to fetch Holiday Requests.");
+            toast.error("Failed to fetch Holiday requests");
+            setLoading(false); 
+          });
+      } else {
+        setBookedFlights(profile_flight);
         setLoading(false);
       }
     };

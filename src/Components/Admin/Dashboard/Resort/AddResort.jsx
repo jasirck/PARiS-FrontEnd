@@ -4,7 +4,7 @@ import { uploadToCloudinary } from "../../../../utils/cloudinaryUtils";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Input,
   Select,
@@ -19,6 +19,7 @@ import {
 } from "@nextui-org/react";
 import { toast } from "sonner";
 import { tr } from "framer-motion/client";
+import {setResort,setsliceResorts} from "../../../Toolkit/Slice/apiHomeSlice";
 
 const schema = yup.object().shape({
   name: yup.string().required("Resort name is required"),
@@ -62,6 +63,7 @@ const AddResortModal = ({ isOpen, onClose }) => {
   const [imageFiles, setImageFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -177,7 +179,8 @@ const AddResortModal = ({ isOpen, onClose }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-
+      dispatch(setResort(null));
+      dispatch(setsliceResorts(null));
       toast.success("Resort added successfully!");
       resetForm();
       onClose();

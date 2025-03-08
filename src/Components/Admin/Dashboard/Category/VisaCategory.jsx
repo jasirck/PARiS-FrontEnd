@@ -69,7 +69,7 @@ function VisaCategory() {
 
   const handleSave = async () => {
     if (!selectedCategory.name || !selectedCategory.description) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.");
       return;
     }
 
@@ -113,17 +113,17 @@ function VisaCategory() {
   }, []);
 
   return (
-    <div className="bg-[#F6F6F6] rounded-lg shadow-lg p-6">
+    <div className="bg-[#F6F6F6] rounded-lg shadow-lg p-4 md:p-6">
       {/* Header with Search and Add New Button */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-[#023246]">Categories</h2>
-        <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+        <h2 className="text-xl md:text-2xl font-bold text-[#023246]">Categories</h2>
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <input
             type="text"
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-[#D4D4CE] p-2 rounded-lg text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094]"
+            className="border border-[#D4D4CE] p-2 rounded-lg text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094] w-full md:w-64"
             aria-label="Search categories"
           />
           <Button
@@ -133,7 +133,7 @@ function VisaCategory() {
                 onModalOpen();
               }, 300);
             }}
-            className="bg-[#287094] text-white px-4 py-2 rounded-lg hover:bg-[#023246]"
+            className="bg-[#287094] text-white px-4 py-2 rounded-lg hover:bg-[#023246] w-full md:w-auto"
           >
             Add New
           </Button>
@@ -146,20 +146,20 @@ function VisaCategory() {
       )}
 
       {!loading && categories.length > 0 && (
-        <div>
-          <div className="grid grid-cols-[25%,55%,15%] gap-2 text-[#023246] font-semibold border-b border-[#D4D4CE]">
+        <div className="overflow-x-auto">
+          <div className="grid grid-cols-1 md:grid-cols-[25%,55%,15%] gap-2 text-[#023246] font-semibold border-b border-[#D4D4CE]">
             <div>Category Name</div>
-            <div>Description</div>
+            <div className="hidden md:block">Description</div>
             <div>Actions</div>
           </div>
 
           {filteredCategories.map((category) => (
             <div
               key={category.id}
-              className="grid grid-cols-[25%,55%,15%] gap-2 items-center py-3 border-b border-[#D4D4CE] hover:bg-[#D4D4CE] transition-all"
+              className="grid grid-cols-1 md:grid-cols-[25%,55%,15%] gap-2 items-center py-3 border-b border-[#D4D4CE] hover:bg-[#D4D4CE] transition-all"
             >
               <div>{category.name}</div>
-              <div>{category.description}</div>
+              <div className="hidden md:block">{category.description}</div>
               <div className="flex gap-2">
                 <Button
                   onPress={() => {
@@ -287,4 +287,4 @@ function VisaCategory() {
   );
 }
 
-export default VisaCategory;
+export default VisaCategory;  

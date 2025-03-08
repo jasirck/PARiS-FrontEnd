@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { IoAirplane,IoCalendarClear,IoSearchSharp,IoSwapHorizontal,} from "react-icons/io5";
-import {Button,Select,SelectItem,Tooltip,} from "@nextui-org/react";
+import { IoAirplane, IoCalendarClear, IoSearchSharp, IoSwapHorizontal } from "react-icons/io5";
+import { Button, Select, SelectItem, Tooltip } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import axios from "../../../../utils/Api";
 import BookingModal from "./BookingModal";
 import { useSelector } from "react-redux";
-import { div } from "framer-motion/client";
 import { toast } from 'sonner';
 
 // Utility Functions
@@ -34,8 +33,7 @@ const formatDateTime = (dateTimeString) => {
   };
 };
 
-
-
+// Flight Card Component
 const FlightCard = ({ flight, setIsModal }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const departure = formatDateTime(flight.departure.scheduled);
@@ -64,12 +62,11 @@ const FlightCard = ({ flight, setIsModal }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       whileHover={{ scale: 1.01 }}
-      className="bg-white rounded-xl p-6 shadow-lg mb-4 hover:shadow-xl border border-[#D4D4CE]"
+      className="bg-white rounded-xl p-4 md:p-6 shadow-lg mb-4 hover:shadow-xl border border-[#D4D4CE]"
     >
-      <div className="grid grid-cols-5 gap-6 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-center">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            
             <h3 className="text-lg font-semibold text-[#023246]">
               {flight.airline.name}
             </h3>
@@ -115,7 +112,6 @@ const FlightCard = ({ flight, setIsModal }) => {
             </p>
             <p className="text-xs text-gray-500">per person</p>
           </div>
-          
           <Button
             size="lg"
             className="w-full bg-[#287094] text-white hover:bg-[#023246] transition-all duration-300"
@@ -126,12 +122,11 @@ const FlightCard = ({ flight, setIsModal }) => {
         </div>
       </div>
 
-      <div>
-      <BookingModal 
-      isOpen={isModalOpen} 
-      onClose={handleCloseModal} 
-      flight={flight}
-    /></div>
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        flight={flight}
+      />
     </motion.div>
   );
 };
@@ -151,8 +146,8 @@ const SearchForm = ({ onSearch }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-8 shadow-lg relative border border-[#D4D4CE]">
-      <div className="grid grid-cols-6 gap-4 items-end">
+    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-lg relative border border-[#D4D4CE]">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
         <div className="col-span-2">
           <label className="block text-sm text-[#287094] font-medium mb-1">From</label>
           <div className="relative">
@@ -225,8 +220,8 @@ const SearchForm = ({ onSearch }) => {
   );
 };
 
-
-const Flights = ({setIsModal}) => {
+// Flights Component
+const Flights = ({ setIsModal }) => {
   const [flights, setFlights] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -234,23 +229,16 @@ const Flights = ({setIsModal}) => {
 
   const handleSearch = async (searchCriteria) => {
     setIsLoading(true);
-    setError(""); // Reset any previous errors
-  
+    setError("");
+
     try {
-      console.log("Search criteria:", searchCriteria);
-      
       const response = await axios.post("api/flights/search/", searchCriteria);
-  
-      // Ensure response.data.flights is an array before setting state
-      if (Array.isArray(response.data.flights) && response.data.flights.length > 0) {
+      if (Array.isArray(response.data.flights) ){
         setFlights(response.data.flights);
       } else {
-        // Handle empty flights array
         setFlights([]);
         setError(`No flights found for ${searchCriteria.from} to ${searchCriteria.to} on ${searchCriteria.date}`);
       }
-  
-      console.log(response.data.flights); // Debug log
     } catch (error) {
       console.error("Error fetching flights:", error);
       setError("Unable to fetch flights. Please try again later.");
@@ -258,7 +246,6 @@ const Flights = ({setIsModal}) => {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-8">
@@ -327,7 +314,6 @@ const Flights = ({setIsModal}) => {
           <h3 className="text-lg font-semibold text-[#023246] mb-2">Important Information</h3>
           <ul className="space-y-2 text-sm text-[#287094]">
             <li>• Prices include all taxes and fees</li>
-            {/* <li>• Free cancellation within 24 hours of booking</li> */}
             <li>• Check baggage allowance before travel</li>
             <li>• Carry valid ID proof during travel</li>
           </ul>

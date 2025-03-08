@@ -58,7 +58,7 @@ function PackageCategory() {
 
   const handleSave = async () => {
     if (!selectedCategory.name || !selectedCategory.description) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.");
       return;
     }
 
@@ -96,17 +96,17 @@ function PackageCategory() {
   }, []);
 
   return (
-    <div className="bg-[#F6F6F6] rounded-lg shadow-lg p-6">
+    <div className="bg-[#F6F6F6] rounded-lg shadow-lg p-4 sm:p-6">
       {/* Header with Search and Add New Button */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="text-2xl font-bold text-[#023246]">Categories</h2>
-        <div className="flex gap-2">
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             placeholder="Search by name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-[#D4D4CE] bg-[#F6F6F6] p-2 rounded-lg text-[#023246] placeholder-[#287094] focus:ring-2 focus:ring-[#287094] focus:outline-none shadow-sm transition duration-300"
+            className="w-full border border-[#D4D4CE] bg-[#F6F6F6] p-2 rounded-lg text-[#023246] placeholder-[#287094] focus:ring-2 focus:ring-[#287094] focus:outline-none shadow-sm transition duration-300"
           />
           <Button
             onPress={() => {
@@ -129,45 +129,92 @@ function PackageCategory() {
 
       {!loading && categories.length > 0 && (
         <div>
-          <div className="grid grid-cols-[25%,55%,15%] gap-2 text-[#023246] font-semibold border-b border-[#D4D4CE]">
+          {/* Desktop Table */}
+          <div className="hidden sm:grid grid-cols-[25%,55%,15%] gap-2 text-[#023246] font-semibold border-b border-[#D4D4CE]">
             <div>Category Name</div>
             <div>Description</div>
             <div>Actions</div>
           </div>
 
-          {filteredCategories.map((category) => (
-            <div
-              key={category.id}
-              className="grid grid-cols-[25%,55%,15%] gap-2 items-center py-3 border-b border-[#D4D4CE] hover:bg-[#D4D4CE] transition-all"
-            >
-              <div>{category.name}</div>
-              <div>{category.description}</div>
-              <div className="flex gap-2">
-                <Button
-                  onPress={() => {
-                    setTimeout(() => {
-                      setSelectedCategory(category);
-                      onModalOpen();
-                    }, 300);
-                  }}
-                  className="bg-[#D4D4CE] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#F6F6F6]"
-                >
-                  Edit
-                </Button>
-                <Button
-                  onPress={() => {
-                    setTimeout(() => {
-                      setCategoryToDelete(category.id);
-                      onDeleteModalOpen();
-                    }, 300);
-                  }}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                >
-                  Delete
-                </Button>
+          {/* Mobile Cards */}
+          <div className="sm:hidden space-y-4">
+            {filteredCategories.map((category) => (
+              <div
+                key={category.id}
+                className="bg-white p-4 rounded-lg shadow-sm"
+              >
+                <div className="space-y-2">
+                  <p>
+                    <span className="font-semibold">Category Name:</span> {category.name}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Description:</span> {category.description}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      onPress={() => {
+                        setTimeout(() => {
+                          setSelectedCategory(category);
+                          onModalOpen();
+                        }, 300);
+                      }}
+                      className="bg-[#D4D4CE] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#F6F6F6]"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onPress={() => {
+                        setTimeout(() => {
+                          setCategoryToDelete(category.id);
+                          onDeleteModalOpen();
+                        }, 300);
+                      }}
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Desktop Table Rows */}
+          <div className="hidden sm:block">
+            {filteredCategories.map((category) => (
+              <div
+                key={category.id}
+                className="grid grid-cols-[25%,55%,15%] gap-2 items-center py-3 border-b border-[#D4D4CE] hover:bg-[#D4D4CE] transition-all"
+              >
+                <div>{category.name}</div>
+                <div>{category.description}</div>
+                <div className="flex gap-2">
+                  <Button
+                    onPress={() => {
+                      setTimeout(() => {
+                        setSelectedCategory(category);
+                        onModalOpen();
+                      }, 300);
+                    }}
+                    className="bg-[#D4D4CE] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#F6F6F6]"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      setTimeout(() => {
+                        setCategoryToDelete(category.id);
+                        onDeleteModalOpen();
+                      }, 300);
+                    }}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import axios from "../../../../utils/Api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
+import { setsliceVisa } from "../../../Toolkit/Slice/apiHomeSlice";
 
-function BookedVisa({handletrackid}) {
+
+function BookedVisa({ handletrackid }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookedVisas, setBookedVisas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +19,8 @@ function BookedVisa({handletrackid}) {
   const imageRef = useRef(null);
   const containerRef = useRef(null);
   const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const booked_visa = useSelector((state) => state.api.booked_visa);
 
   const filteredRequests = useMemo(() => {
     if (!Array.isArray(bookedVisas)) return [];
@@ -27,10 +31,8 @@ function BookedVisa({handletrackid}) {
 
   useEffect(() => {
     fetchBookedVisas();
-    
   }, [token]);
 
-  // Reset position when zoom level changes
   useEffect(() => {
     if (imageRef.current && containerRef.current) {
       const container = containerRef.current.getBoundingClientRect();
@@ -43,16 +45,25 @@ function BookedVisa({handletrackid}) {
   }, [zoomLevel]);
 
   const fetchBookedVisas = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/admin-visa-booking/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBookedVisas(response.data);
-    } catch (err) {
-      setError("Failed to fetch Visa Bookings.");
-      toast.error("Failed to fetch visa bookings");
-    } finally {
+    setLoading(true);
+
+    if (!booked_visa) {
+      axios
+        .get("/api/admin-visa-booking/", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          dispatch(setsliceVisa(response.data));
+          setBookedVisas(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching Visas:", error);
+          setError("Failed to fetch Visas Requests.");
+          toast.error("Failed to fetch Visas requests");
+        });
+      setLoading(false);
+    } else {
+      setBookedVisas(booked_visa);
       setLoading(false);
     }
   };
@@ -64,6 +75,7 @@ function BookedVisa({handletrackid}) {
         { id: requestId, status: "Approved" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      dispatch(setsliceVisa(null));
       toast.success("Visa request approved successfully");
       fetchBookedVisas();
     } catch (err) {
@@ -78,6 +90,7 @@ function BookedVisa({handletrackid}) {
         { id: requestId, status: "Declined" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      dispatch(setsliceVisa(null));
       toast.success("Visa request declined successfully");
       fetchBookedVisas();
     } catch (err) {
@@ -118,11 +131,9 @@ function BookedVisa({handletrackid}) {
       const newX = e.clientX - dragStart.x;
       const newY = e.clientY - dragStart.y;
 
-      // Calculate boundaries
       const container = containerRef.current.getBoundingClientRect();
       const image = imageRef.current.getBoundingClientRect();
 
-      // Limit movement within container bounds
       const maxX = container.width - image.width;
       const maxY = container.height - image.height;
 
@@ -143,7 +154,6 @@ function BookedVisa({handletrackid}) {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Calculate zoom direction
     const delta = -Math.sign(e.deltaY);
     const scale = 0.1;
     const newZoomLevel = Math.max(1, Math.min(5, zoomLevel + delta * scale));
@@ -197,16 +207,18 @@ function BookedVisa({handletrackid}) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Visa Bookings</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800">
+          Visa Bookings
+        </h2>
         <div className="w-full md:w-auto">
           <input
             type="text"
             placeholder="🔍 Search by user name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full md:w-64 border border-gray-300 bg-gray-50 p-3 rounded-lg text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none shadow-sm transition duration-300"
+            className="w-full md:w-64 border border-gray-300 bg-gray-50 p-2 md:p-3 rounded-lg text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none shadow-sm transition duration-300"
           />
         </div>
       </div>
@@ -290,13 +302,13 @@ function BookedVisa({handletrackid}) {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   User
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Contact
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Visa Type
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-semibold text-gray-600">
                   Visa Id
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
@@ -321,16 +333,23 @@ function BookedVisa({handletrackid}) {
                       {visa.user_name}
                     </div>
                   </td>
-                  <td className="px-4 py-4">
+                  <td className="hidden md:table-cell px-4 py-4">
                     <div className="text-gray-600">
                       {visa.number || visa.email}
                     </div>
                   </td>
-                  <td className="px-4 py-4">
+                  <td className="hidden md:table-cell px-4 py-4">
                     <div className="text-gray-800">{visa.booked_visa_name}</div>
                   </td>
-                  <td className="px-4 py-4">
-                    <div onClick={() => handletrackid('Visa','/admin/visa',visa.booked_visa,'visa')} className="text-gray-800">{visa.booked_visa}</div>
+                  <td className="hidden md:table-cell px-4 py-4">
+                    <div
+                      onClick={() =>
+                        handletrackid("Visa", "/admin/visa", visa.booked_visa, "visa")
+                      }
+                      className="text-gray-800"
+                    >
+                      {visa.booked_visa}
+                    </div>
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex gap-2">

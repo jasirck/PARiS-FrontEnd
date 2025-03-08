@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoClose, IoSend, IoInformationCircle, IoChatbubbleEllipses } from "react-icons/io5";
 import { useSelector } from "react-redux";
-import { toast } from 'sonner';
+import  {WS_BASE_URL}  from "../utils/services/socket.js";
+
 
 const UserChat = ({ onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -19,16 +20,13 @@ const UserChat = ({ onClose }) => {
 
   useEffect(() => {
     const connectWebSocket = () => {
-      socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/chat/?token=${token}`);
-
+      socketRef.current = new WebSocket(`${WS_BASE_URL}/ws/chat/?token=${token}`);
       socketRef.current.onopen = () => {
         setIsConnected(true);
-        toast.success('Connected to chat server');
       };
 
       socketRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("data", data);
         
         if (data.type === "chat_history") {
           const chatHistory = data.messages.map((msg) => ({
@@ -44,7 +42,8 @@ const UserChat = ({ onClose }) => {
             timestamp: new Date(data.timestamp).getTime(),
             pending: false
           };
-
+          console.log("newMessage", newMessage,'messages',messages);
+          
           setMessages((prev) => {
             // Remove corresponding pending message if it exists
             const pendingId = Array.from(pendingMessagesRef.current)
@@ -67,13 +66,11 @@ const UserChat = ({ onClose }) => {
 
       socketRef.current.onclose = () => {
         setIsConnected(false);
-        toast.error('Disconnected from server. Reconnecting...');
         setTimeout(connectWebSocket, 5000);
       };
 
       socketRef.current.onerror = () => {
         setIsConnected(false);
-        toast.error('Connection error. Please try again later.');
       };
     };
 
@@ -131,7 +128,6 @@ const UserChat = ({ onClose }) => {
       setInputMessage("");
       inputRef.current?.focus();
     } else if (socketRef.current?.readyState !== WebSocket.OPEN) {
-      toast.error('Unable to send message. Please check your connection.');
     }
   };
 
@@ -184,9 +180,6 @@ const UserChat = ({ onClose }) => {
           <button 
             onClick={() => {
               setShowInfo(!showInfo);
-              if (!showInfo) {
-                toast.info('24/7 Support - Average response time: 5 minutes');
-              }
             }} 
             className="hover:bg-[#023246] p-2 rounded-full transition-colors duration-200"
           >
@@ -260,8 +253,5 @@ const UserChat = ({ onClose }) => {
 };
 
 export default UserChat;
-
-
-
 
 

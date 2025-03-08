@@ -1,3 +1,5 @@
+// utils/Cloudinaryutils.js
+
 export const uploadToCloudinary = async (file) => {  
   const formData = new FormData();
   formData.append("file", file);

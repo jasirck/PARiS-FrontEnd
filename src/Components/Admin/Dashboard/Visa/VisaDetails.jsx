@@ -177,7 +177,7 @@ function VisaDetailsModal({ visaId, isOpen, closeModal }) {
                 <div className="p-6 border-t border-gray-200">
                   <button
                     onClick={closeModal}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium"
+                    className="w-full bg-[#4a4a4a] hover:bg-[#333333] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium"
                   >
                     Close
                   </button>

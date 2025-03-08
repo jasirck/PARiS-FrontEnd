@@ -7,7 +7,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Form,
   Input,
@@ -22,6 +22,7 @@ import {
   ModalFooter,
 } from "@nextui-org/react";
 import { toast } from "sonner";
+import {setResort,setsliceResorts} from "../../../Toolkit/Slice/apiHomeSlice";
 
 const ResortEdit = ({ resortId, closeModal }) => {
   const [resortData, setResortData] = useState(null);
@@ -31,6 +32,7 @@ const ResortEdit = ({ resortId, closeModal }) => {
   const [deletedImageIds, setDeletedImageIds] = useState([]); // Old images to delete
   const [loading, setLoading] = useState(false);
   const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const schema = yup.object().shape({
     name: yup.string().required("Resort name is required"),
@@ -177,7 +179,8 @@ const ResortEdit = ({ resortId, closeModal }) => {
           "Content-Type": "application/json",
         },
       });
-
+      dispatch(setResort(null));
+      dispatch(setsliceResorts(null));
       toast.success("Resort updated successfully!");
       closeModal();
     } catch (error) {

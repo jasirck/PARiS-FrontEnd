@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "../../../../utils/Api";
 import { motion } from "framer-motion";
 import BookingModal from "./Booking";
-import { start } from "@cloudinary/url-gen/qualifiers/textAlignment";
-import { div } from "framer-motion/client";
 import { useSelector } from "react-redux";
 
 export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
@@ -29,8 +27,6 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
             },
           });
           setResortData(response.data);
-          console.log(response.data);
-          
 
           // Set first image as selected
           if (response.data.images?.length > 0) {
@@ -42,7 +38,6 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
         } catch (error) {
           console.error("Error fetching resort details:", error);
           setResortData(null);
-          setPackageData(null);
         } finally {
           setIsLoading(false);
         }
@@ -53,12 +48,12 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
 
   // Image scrolling and selection logic
   const scrollUp = () => {
-    setImageOffset(prev => Math.max(0, prev - 1));
+    setImageOffset((prev) => Math.max(0, prev - 1));
   };
 
   const scrollDown = () => {
     const images = resortData?.images || [];
-    setImageOffset(prev => 
+    setImageOffset((prev) =>
       prev < Math.max(0, images.length - 3) ? prev + 1 : prev
     );
   };
@@ -79,18 +74,18 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
 
   // Pricing calculation
   const calculatePricing = () => {
-    const { base_price, adult_price, child_price } = resortData;
+    const { base_price, adult_price, child_price } = resortData || {};
     return {
-      basePrice: base_price || 'N/A',
-      adultPrice: adult_price || 'N/A',
-      childPrice: child_price || 'N/A',
+      basePrice: base_price || "N/A",
+      adultPrice: adult_price || "N/A",
+      childPrice: child_price || "N/A",
     };
   };
 
   // Render content when loading
   if (isLoading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50"
@@ -107,7 +102,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
   const cloudinaryBase = "https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/";
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50"
@@ -126,7 +121,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
 
         <div className="p-6 md:p-8">
           {/* Resort Name */}
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-2xl md:text-3xl font-bold text-[#1E546F] mb-6 pb-4 border-b border-gray-200"
@@ -142,7 +137,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
                 <motion.button
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 1 }}
-                  className="absolute -top-2 left-1/2 h-8 w-8  z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
+                  className="absolute -top-2 left-1/2 h-8 w-8 z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
                   onClick={scrollUp}
                   aria-label="Scroll up images"
                 >
@@ -150,36 +145,39 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
                 </motion.button>
               )}
 
-              {resortData.images?.slice(imageOffset, imageOffset + 3).map((image, index) => (
-                <motion.div
-                  key={image.id}
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer group"
-                  onClick={() => handleImageClick(image)}
-                >
-                  <img
-                    src={`${cloudinaryBase}${image.image}`}
-                    alt={`Resort image ${index + 1}`}
-                    className="w-full h-[120px] object-cover rounded-lg shadow-md"
-                  />
-                </motion.div>
-              ))}
+              {resortData.images
+                ?.slice(imageOffset, imageOffset + 3)
+                .map((image, index) => (
+                  <motion.div
+                    key={image.id}
+                    whileHover={{ scale: 1.05 }}
+                    className="cursor-pointer group"
+                    onClick={() => handleImageClick(image)}
+                  >
+                    <img
+                      src={`${cloudinaryBase}${image.image}`}
+                      alt={`Resort image ${index + 1}`}
+                      className="w-full h-[120px] object-cover rounded-lg shadow-md"
+                    />
+                  </motion.div>
+                ))}
 
-              {resortData.images?.length > 3 && imageOffset < resortData.images.length - 3 && (
-                <motion.button
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="absolute -bottom-2 h-8 w-8 left-1/2  z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
-                  onClick={scrollDown}
-                  aria-label="Scroll down images"
-                >
-                  ▼
-                </motion.button>
-              )}
+              {resortData.images?.length > 3 &&
+                imageOffset < resortData.images.length - 3 && (
+                  <motion.button
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="absolute -bottom-2 h-8 w-8 left-1/2 z-10 bg-white/70 rounded-full p-1 shadow-md hover:bg-white/90"
+                    onClick={scrollDown}
+                    aria-label="Scroll down images"
+                  >
+                    ▼
+                  </motion.button>
+                )}
             </div>
 
             {/* Main Image */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -188,13 +186,13 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
               <img
                 src={`${cloudinaryBase}${selectedImage.src}`}
                 alt={selectedImage.alt}
-                className="w-full h-[400px] object-cover rounded-2xl shadow-lg"
+                className="w-full h-[300px] md:h-[400px] object-cover rounded-2xl shadow-lg"
               />
             </motion.div>
           </div>
 
           {/* Resort Details */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="grid md:grid-cols-2 gap-6 bg-gray-50 rounded-3xl p-6"
@@ -206,12 +204,12 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
               </h3>
               <ul className="space-y-2 text-[#023246]">
                 <li className="flex items-center">
-                  <span className="mr-2">📍</span> 
-                  Location: {resortData.location || 'Not specified'}
+                  <span className="mr-2">📍</span>
+                  Location: {resortData.location || "Not specified"}
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2">🏊</span>
-                  Pool: {resortData.pool ? 'Available' : 'Not Available'}
+                  Pool: {resortData.pool ? "Available" : "Not Available"}
                 </li>
               </ul>
               <br />
@@ -242,10 +240,10 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
           </motion.div>
 
           {/* Actions */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-end items-center mt-6 space-x-4"
+            className="flex flex-col md:flex-row justify-end items-center mt-6 space-y-4 md:space-y-0 md:space-x-4"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -267,7 +265,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-[#287094] text-white px-6 py-2 rounded-full hover:bg-[#1e5674] transition flex items-center"
-              onClick={() => alert('Callback request to be implemented')}
+              onClick={() => alert("Callback request to be implemented")}
             >
               📞 Request Callback
             </motion.button>
@@ -276,8 +274,7 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
 
         {/* Booking Modal */}
         {isModalOpen && (
-          <div>
-            <BookingModal
+          <BookingModal
             handleBookingModal={() => setIsModalOpen(false)}
             isModalOpen={isModalOpen}
             data={{
@@ -287,10 +284,9 @@ export default function ResortDetailModal({ isOpen, onClose, ResortId }) {
               base_price: resortData.base_price,
               adult_price: resortData.adult_price,
               child_price: resortData.child_price,
-              id: ResortId
+              id: ResortId,
             }}
           />
-          </div>
         )}
       </div>
     </motion.div>

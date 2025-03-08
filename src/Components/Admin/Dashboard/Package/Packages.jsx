@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "../../../../utils/Api";
 import AddPackageModal from "./AddPackeges";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PackageDetailsModal from "./PackageDetails";
 import PackageEditModal from "./PackageEdit";
 import { toast } from "sonner";
 import { Button } from "@nextui-org/react";
+import {setPackage} from "../../../Toolkit/Slice/apiHomeSlice";
+
 
 
 function Packages({ packageId, setPackageId }) {
@@ -18,6 +20,8 @@ function Packages({ packageId, setPackageId }) {
   const [selectedPackageId, setSelectedPackageId] = useState(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const Redux_package = useSelector((state) => state.api.package);
 
   const filteredPackages = useMemo(() => {
     if (Array.isArray(packages)) {
@@ -33,17 +37,28 @@ function Packages({ packageId, setPackageId }) {
     console.log(packageId);
     
     const fetchPackages = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("/api/admin-packages/", {
+
+
+    setLoading(true);
+    if (!Redux_package) {
+      axios
+        .get("/api/admin-packages/", {
           headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          dispatch(setPackage(response.data));
+          setPackages(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching Packages:", error);
+          setError("Failed to fetch Packages Requests.");
+          toast.error("Failed to fetch Packages requests");
         });
-        setPackages(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch packages.");
-        setLoading(false);
-      }
+      setLoading(false);
+    } else {
+      setPackages(Redux_package);
+      setLoading(false);
+    }
     };
 
     fetchPackages();

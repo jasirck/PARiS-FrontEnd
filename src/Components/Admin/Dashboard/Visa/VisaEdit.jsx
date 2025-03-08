@@ -3,7 +3,7 @@ import axios from "../../../../utils/Api";
 import { uploadToCloudinary } from "../../../../utils/cloudinaryUtils";
 import { toast } from "sonner";
 import { Form, Input, Button } from "@nextui-org/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Modal,
   ModalContent,
@@ -11,6 +11,9 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/modal";
+import {setVisa,setsliceVisa} from "../../../Toolkit/Slice/apiHomeSlice";
+
+
 const EditVisaModal = ({ isOpen, onClose, visaId }) => {
     const [categories, setCategories] = useState([]);
     const [visaDays, setVisaDays] = useState([{ day: 1, days: "", price: "" }]);
@@ -18,6 +21,7 @@ const EditVisaModal = ({ isOpen, onClose, visaId }) => {
     const { token } = useSelector((state) => state.auth);
   
     const [formErrors, setFormErrors] = useState({});
+    const dispatch = useDispatch();
     const [formData, setFormData] = useState({
       name: "",
       category: "",
@@ -146,6 +150,8 @@ const EditVisaModal = ({ isOpen, onClose, visaId }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Visa package updated successfully!");
+        dispatch(setVisa(null));
+        dispatch(setsliceVisa(null));
         onClose(); // Close the modal after successful submission
       } catch (error) {
         console.error("Error updating visa:", error.response?.data || error.message);

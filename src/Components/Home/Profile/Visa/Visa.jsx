@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Users, Image } from "lucide-react";
 import axios from "../../../../utils/Api";
-import { useSelector } from "react-redux";
 import { Button } from "@nextui-org/react";
 import PaymentForm from "../../PaymentForm";
 // import VisaDetailModal from "./VisaDetails";
+import { setProfileVisa } from "../../../Toolkit/Slice/apiHomeSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function Visa() {
   const [bookings, setBookings] = useState([]);
@@ -13,21 +14,50 @@ function Visa() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+  const profile_visa = useSelector((state) => state.api.profile_visa);
   const [showPayment, setShowPayment] = useState(false);
 
   useEffect(() => {
     const fetchBookings = async () => {
-      try {
-        const response = await axios.get("api/booked-visa/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Visa Bookings:", response.data);
-        
-        setBookings(response.data);
-      } catch (err) {
-        setError("Failed to fetch visa bookings");
-        console.error("Error fetching bookings:", err);
-      } finally {
+
+
+
+
+
+
+      if (!profile_visa) {
+        setLoading(true); // Start loading before the API call
+      
+        axios
+          .get("api/booked-visa/", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((response) => {
+            dispatch(setProfileVisa(response.data));
+            setBookings(response.data);
+      
+            // const initialCountdowns = {};
+            // response.data.forEach((booking) => {
+            //   if (booking.conformed === "Confirmed") {
+            //     const targetTime = new Date(booking.date).getTime();
+            //     const now = new Date().getTime();
+            //     const timeLeft = Math.max(0, targetTime - now); 
+            //     initialCountdowns[booking.id] = timeLeft;
+            //   }
+            // });
+      
+            // setCountdowns(initialCountdowns);
+            setLoading(false); 
+          })
+          .catch((error) => {
+            console.error("Error fetching visa:", error);
+            setError("Failed to fetch visa Requests.");
+            toast.error("Failed to fetch visa requests");
+            setLoading(false); 
+          });
+      } else {
+        setBookings(profile_visa);
         setLoading(false);
       }
     };

@@ -69,7 +69,7 @@ function ResortCategory() {
 
   const handleSave = async () => {
     if (!selectedCategory.name || !selectedCategory.description) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.");
       return;
     }
 
@@ -113,17 +113,17 @@ function ResortCategory() {
   }, []);
 
   return (
-    <div className="bg-[#F6F6F6] rounded-lg shadow-lg p-6">
-      {/* Header with Search and Add New Button */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-[#023246]">Categories</h2>
-        <div className="flex gap-2">
+    <div className="bg-[#F6F6F6] rounded-lg shadow-lg p-4 sm:p-6">
+      {/* Header with Search and Add New Button - Responsive */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-[#023246] w-full sm:w-auto">Categories</h2>
+        <div className="flex flex-col md:flex-row gap-2 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-[#D4D4CE] p-2 rounded-lg text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094]"
+            className="border border-[#D4D4CE] p-2 rounded-lg text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094] w-full"
             aria-label="Search categories"
           />
           <Button
@@ -133,7 +133,7 @@ function ResortCategory() {
                 onModalOpen();
               }, 300);
             }}
-            className="bg-[#287094] text-white px-4 py-2 rounded-lg hover:bg-[#023246]"
+            className="bg-[#287094] text-white px-4 py-2 rounded-lg hover:bg-[#023246] w-full md:w-auto"
           >
             Add New
           </Button>
@@ -145,52 +145,108 @@ function ResortCategory() {
         <div className="text-center text-[#287094]">Loading categories...</div>
       )}
 
-      {!loading && categories.length > 0 && (
-        <div>
-          <div className="grid grid-cols-[25%,55%,15%] gap-2 text-[#023246] font-semibold border-b border-[#D4D4CE]">
-            <div>Category Name</div>
-            <div>Description</div>
-            <div>Actions</div>
-          </div>
-
-          {filteredCategories.map((category) => (
-            <div
-              key={category.id}
-              className="grid grid-cols-[25%,55%,15%] gap-2 items-center py-3 border-b border-[#D4D4CE] hover:bg-[#D4D4CE] transition-all"
-            >
-              <div>{category.name}</div>
-              <div>{category.description}</div>
-              <div className="flex gap-2">
-                <Button
-                  onPress={() => {
-                    setTimeout(() => {
-                      setSelectedCategory(category);
-                      onModalOpen();
-                    }, 300);
-                  }}
-                  className="bg-[#D4D4CE] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#F6F6F6]"
-                >
-                  Edit
-                </Button>
-                <Button
-                  onPress={() => {
-                    setTimeout(() => {
-                      setCategoryToDelete(category.id);
-                      onDeleteModalOpen();
-                    }, 300);
-                  }}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          ))}
+      {!loading && categories.length === 0 && (
+        <div className="text-center text-[#023246] py-6">
+          No categories found. Create a new category to get started.
         </div>
       )}
 
-      {/* Modal for Add/Edit */}
-      <Modal isOpen={isModalOpen} onClose={onModalClose} aria-labelledby="modal-title">
+      {!loading && categories.length > 0 && (
+        <>
+          {/* Desktop View */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-[25%,55%,20%] gap-2 text-[#023246] font-semibold border-b border-[#D4D4CE] pb-2">
+              <div>Category Name</div>
+              <div>Description</div>
+              <div>Actions</div>
+            </div>
+
+            {filteredCategories.map((category) => (
+              <div
+                key={category.id}
+                className="grid grid-cols-[25%,55%,20%] gap-2 items-center py-3 border-b border-[#D4D4CE] hover:bg-[#D4D4CE] transition-all"
+              >
+                <div className="truncate">{category.name}</div>
+                <div className="truncate">{category.description}</div>
+                <div className="flex gap-2">
+                  <Button
+                    onPress={() => {
+                      setTimeout(() => {
+                        setSelectedCategory(category);
+                        onModalOpen();
+                      }, 300);
+                    }}
+                    className="bg-[#D4D4CE] text-[#023246] px-3 py-1 rounded-lg hover:bg-[#F6F6F6] text-sm"
+                    size="sm"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      setTimeout(() => {
+                        setCategoryToDelete(category.id);
+                        onDeleteModalOpen();
+                      }, 300);
+                    }}
+                    className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 text-sm"
+                    size="sm"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile View - Card Layout */}
+          <div className="md:hidden">
+            {filteredCategories.map((category) => (
+              <div
+                key={category.id}
+                className="bg-white rounded-lg shadow mb-4 p-4"
+              >
+                <div className="mb-2">
+                  <h3 className="font-bold text-[#023246]">{category.name}</h3>
+                  <p className="text-gray-600 text-sm mt-1">{category.description}</p>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <Button
+                    onPress={() => {
+                      setTimeout(() => {
+                        setSelectedCategory(category);
+                        onModalOpen();
+                      }, 300);
+                    }}
+                    className="bg-[#D4D4CE] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#F6F6F6] flex-1"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      setTimeout(() => {
+                        setCategoryToDelete(category.id);
+                        onDeleteModalOpen();
+                      }, 300);
+                    }}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex-1"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Modal for Add/Edit - Responsive adjustments */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={onModalClose}
+        size="sm"
+        aria-labelledby="modal-title"
+        className="mx-4"
+      >
         <ModalContent>
           <ModalHeader>
             {selectedCategory?.id ? "Edit Category" : "Add Category"}
@@ -201,55 +257,78 @@ function ResortCategory() {
                 <p>{error}</p>
               </div>
             )}
-            <input
-              type="text"
-              placeholder="Category Name"
-              value={selectedCategory?.name || ""}
-              onChange={(e) =>
-                setSelectedCategory({
-                  ...selectedCategory,
-                  name: e.target.value,
-                })
-              }
-              className="border border-[#D4D4CE] p-2 rounded-lg w-full text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094]"
-            />
-            <textarea
-              placeholder="Description"
-              value={selectedCategory?.description || ""}
-              onChange={(e) =>
-                setSelectedCategory({
-                  ...selectedCategory,
-                  description: e.target.value,
-                })
-              }
-              className="border border-[#D4D4CE] p-2 rounded-lg w-full text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094]"
-            />
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="categoryName" className="block text-sm font-medium text-[#023246] mb-1">
+                  Category Name
+                </label>
+                <input
+                  id="categoryName"
+                  type="text"
+                  placeholder="Enter category name"
+                  value={selectedCategory?.name || ""}
+                  onChange={(e) =>
+                    setSelectedCategory({
+                      ...selectedCategory,
+                      name: e.target.value,
+                    })
+                  }
+                  className="border border-[#D4D4CE] p-2 rounded-lg w-full text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094]"
+                />
+              </div>
+              <div>
+                <label htmlFor="categoryDescription" className="block text-sm font-medium text-[#023246] mb-1">
+                  Description
+                </label>
+                <textarea
+                  id="categoryDescription"
+                  placeholder="Enter description"
+                  value={selectedCategory?.description || ""}
+                  onChange={(e) =>
+                    setSelectedCategory({
+                      ...selectedCategory,
+                      description: e.target.value,
+                    })
+                  }
+                  rows={4}
+                  className="border border-[#D4D4CE] p-2 rounded-lg w-full text-[#023246] focus:outline-none focus:ring-2 focus:ring-[#287094]"
+                />
+              </div>
+            </div>
           </ModalBody>
           <ModalFooter>
-            <Button
-              onPress={() => {
-                setTimeout(() => {
-                  onModalClose();
-                  setSelectedCategory(null);
-                  setError(null);
-                }, 300);
-              }}
-              className="bg-[#F6F6F6] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#D4D4CE]"
-            >
-              Cancel
-            </Button>
-            <Button
-              onPress={handleSave}
-              className="bg-[#287094] text-white px-4 py-2 rounded-lg hover:bg-[#023246]"
-            >
-              Save
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <Button
+                onPress={() => {
+                  setTimeout(() => {
+                    onModalClose();
+                    setSelectedCategory(null);
+                    setError(null);
+                  }, 300);
+                }}
+                className="bg-[#F6F6F6] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#D4D4CE] w-full sm:w-auto"
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={handleSave}
+                className="bg-[#287094] text-white px-4 py-2 rounded-lg hover:bg-[#023246] w-full sm:w-auto"
+              >
+                Save
+              </Button>
+            </div>
           </ModalFooter>
         </ModalContent>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
-      <Modal isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} aria-labelledby="delete-modal-title">
+      {/* Delete Confirmation Modal - Responsive adjustments */}
+      <Modal 
+        isOpen={isDeleteModalOpen} 
+        onClose={onDeleteModalClose}
+        size="sm"
+        aria-labelledby="delete-modal-title"
+        className="mx-4"
+      >
         <ModalContent>
           <ModalHeader>Confirm Deletion</ModalHeader>
           <ModalBody>
@@ -263,23 +342,25 @@ function ResortCategory() {
             </p>
           </ModalBody>
           <ModalFooter>
-            <Button
-              onPress={() => {
-                setTimeout(() => {
-                  onDeleteModalClose();
-                  setError(null);
-                }, 300);
-              }}
-              className="bg-[#F6F6F6] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#D4D4CE]"
-            >
-              Cancel
-            </Button>
-            <Button
-              onPress={() => setTimeout(handleDelete, 300)}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-            >
-              Delete
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <Button
+                onPress={() => {
+                  setTimeout(() => {
+                    onDeleteModalClose();
+                    setError(null);
+                  }, 300);
+                }}
+                className="bg-[#F6F6F6] text-[#023246] px-4 py-2 rounded-lg hover:bg-[#D4D4CE] w-full sm:w-auto"
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={() => setTimeout(handleDelete, 300)}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full sm:w-auto"
+              >
+                Delete
+              </Button>
+            </div>
           </ModalFooter>
         </ModalContent>
       </Modal>

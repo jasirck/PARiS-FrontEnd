@@ -4,8 +4,10 @@ import { uploadToCloudinary } from "../../../../utils/cloudinaryUtils";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@nextui-org/react";
+import {setPackage,setslicePackages} from "../../../Toolkit/Slice/apiHomeSlice";
+
 
 
 const PackageEditModal = ({ isOpen, onClose, packageId }) => {
@@ -18,6 +20,7 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [imagePreviews, setImagePreviews] = useState({});
   const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const schema = yup.object().shape({
     name: yup.string().required("Package name is required."),
@@ -258,6 +261,8 @@ const PackageEditModal = ({ isOpen, onClose, packageId }) => {
         },
       });
       console.log("Package updated successfully!");
+      dispatch(setPackage(null));
+      dispatch(setslicePackages(null));
       onClose();
     } catch (error) {
       console.error(

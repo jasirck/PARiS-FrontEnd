@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "../../../../utils/Api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddResortModal from "./AddResort";
 import { Button } from "@nextui-org/react";
 import ResortDetails from "./ResortDetails";
 import ResortEdit from "./ResortEdit";
-import { div } from "framer-motion/client";
+import {setResort} from "../../../Toolkit/Slice/apiHomeSlice";
 
-function Resorts({resortId,setResortId}) {
+
+function Resorts({ resortId, setResortId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [resorts, setResorts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -16,6 +17,8 @@ function Resorts({resortId,setResortId}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const resort = useSelector((state) => state.api.resort);
 
   const filteredResorts = useMemo(() => {
     if (Array.isArray(resorts)) {
@@ -29,47 +32,54 @@ function Resorts({resortId,setResortId}) {
 
   useEffect(() => {
     const fetchResorts = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("/api/admin-resorts/", {
+
+
+
+    setLoading(true);
+    if (!resort) {
+      axios
+        .get("/api/admin-resorts/", {
           headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          dispatch(setResort(response.data));
+          setResorts(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching Resort:", error);
+          setError("Failed to fetch Resort Requests.");
+          toast.error("Failed to fetch Resort requests");
         });
-        setResorts(response.data);
-        setLoading(false);
-        if(resortId){
-          setSelectedResortId(resortId);
-          setResortId(null);
-        }
-      } catch (err) {
-        console.error("Error fetching resorts:", err);
-        setError("Failed to fetch resorts.");
-        setLoading(false);
-      }
+      setLoading(false);
+    } else {
+      setResorts(resort);
+      setLoading(false);
+    }
     };
 
     fetchResorts();
   }, [token, showAddForm]);
 
   if (loading) {
-    return <div>Loading resorts...</div>;
+    return <div className="p-4 text-center text-gray-600">Loading resorts...</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="p-4 text-center text-red-500">{error}</div>;
   }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
-      <div className="flex justify-between items-center mb-4">
+      {/* Header with Search and Add New Button */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
         <h2 className="text-xl font-semibold text-gray-800">Resorts</h2>
-
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <input
             type="text"
             placeholder="Search by name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 p-2 rounded-lg"
+            className="w-full md:w-64 border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-[#287094] focus:outline-none"
           />
           <Button
             color="primary"
@@ -79,12 +89,14 @@ function Resorts({resortId,setResortId}) {
               }, 300);
             }}
             radius="sm"
+            className="w-full md:w-auto"
           >
             {showAddForm ? "Cancel" : "Add New Resort"}
           </Button>
         </div>
       </div>
 
+      {/* Add New Resort Form */}
       {showAddForm && (
         <div className="mb-4 p-4 border border-gray-300 rounded-lg">
           <AddResortModal
@@ -93,6 +105,80 @@ function Resorts({resortId,setResortId}) {
           />
         </div>
       )}
+
+      {/* Resorts Table */}
+      <div className="overflow-x-auto">
+        {/* Table Header */}
+        <div className="hidden md:grid grid-cols-7 gap-2 text-gray-700 font-semibold border-b border-gray-300 p-2">
+          <div>Resort Name</div>
+          <div>Location</div>
+          <div>Pool</div>
+          <div>Base Price</div>
+          <div>Adult Price</div>
+          <div>Child Price</div>
+          <div>Action</div>
+        </div>
+
+        {/* Resorts List */}
+        <div>
+          {filteredResorts.map((resort) => (
+            <div
+              key={resort.id}
+              className="grid grid-cols-1 md:grid-cols-7 gap-2 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all p-2"
+            >
+              {/* Mobile View: Card Layout */}
+              <div className="md:hidden space-y-2">
+                <div className="font-semibold text-gray-800">{resort.name}</div>
+                <div className="text-sm text-gray-600">Location: {resort.location}</div>
+                <div className="text-sm text-gray-600">Pool: {resort.pool ? "Yes" : "No"}</div>
+                <div className="text-sm text-gray-600">Base Price: {resort.base_price}</div>
+                <div className="text-sm text-gray-600">Adult Price: {resort.adult_price}</div>
+                <div className="text-sm text-gray-600">Child Price: {resort.child_price}</div>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    onClick={() => setSelectedResortId(resort.id)}
+                    className="bg-[#4a4a4a] text-white px-4 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                  >
+                    View
+                  </Button>
+                  <Button
+                    onClick={() => setSelectedResortIdEdit(resort.id)}
+                    className="bg-[#4a4a4a] text-white px-4 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                  >
+                    Edit
+                  </Button>
+                </div>
+              </div>
+
+              {/* Desktop View: Table Layout */}
+              <div className={`hidden md:block ${resort.valid ? "" : "text-red-600"}`}>
+                {resort.name}
+              </div>
+              <div className="hidden md:block">{resort.location}</div>
+              <div className="hidden md:block">{resort.pool ? "Yes" : "No"}</div>
+              <div className="hidden md:block">{resort.base_price}</div>
+              <div className="hidden md:block">{resort.adult_price}</div>
+              <div className="hidden md:block">{resort.child_price}</div>
+              <div className="hidden md:flex gap-2">
+                <Button
+                  onClick={() => setSelectedResortId(resort.id)}
+                  className="bg-[#4a4a4a] text-white px-4 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                >
+                  View
+                </Button>
+                <Button
+                  onClick={() => setSelectedResortIdEdit(resort.id)}
+                  className="bg-[#4a4a4a] text-white px-4 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                >
+                  Edit
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Modals */}
       {selectedResortId && (
         <ResortDetails
           resortId={selectedResortId}
@@ -100,51 +186,11 @@ function Resorts({resortId,setResortId}) {
         />
       )}
       {selectedResortIdEdit && (
-          <ResortEdit
-            resortId={selectedResortIdEdit}
-            closeModal={() => setSelectedResortIdEdit(null)}
-          />
+        <ResortEdit
+          resortId={selectedResortIdEdit}
+          closeModal={() => setSelectedResortIdEdit(null)}
+        />
       )}
-
-      <div className="grid grid-cols-7 gap-2 text-gray-700 font-semibold border-b border-gray-300">
-        <div>Resort Name</div>
-        <div>Location</div>
-        <div>Pool</div>
-        <div>Base Price</div>
-        <div>Adult Price</div>
-        <div>Child Price</div>
-        <div>Action</div>
-      </div>
-
-      <div>
-        {filteredResorts.map((resort) => (
-          <div
-            key={resort.id}
-            className="grid grid-cols-7 gap-2 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all"
-          >
-            <div className={` ${resort.valid ? "" : "text-red-600"}`}>{resort.name}</div>
-            <div>{resort.location}</div>
-            <div>{resort.pool ? "Yes" : "No"}</div>
-            <div>{resort.base_price}</div>
-            <div>{resort.adult_price}</div>
-            <div>{resort.child_price}</div>
-            <div className="gap-1 flex">
-              <Button
-                onClick={() => setSelectedResortId(resort.id)}
-                className="bg-[#4a4a4a] text-white px-4 py-2 rounded-lg"
-              >
-                View
-              </Button>
-              <Button
-                onClick={() => setSelectedResortIdEdit(resort.id)}
-                className="bg-[#4a4a4a] text-white px-4 py-2 rounded-lg"
-              >
-                Edit
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

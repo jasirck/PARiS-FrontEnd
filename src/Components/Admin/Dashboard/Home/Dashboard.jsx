@@ -60,6 +60,7 @@ function Dashboard() {
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false, // Ensure chart scales properly
           scales: {
             y: {
               beginAtZero: true,
@@ -100,6 +101,7 @@ function Dashboard() {
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false, // Ensure chart scales properly
           plugins: {
             title: {
               display: true,
@@ -115,11 +117,13 @@ function Dashboard() {
   if (error) return <ErrorState message={error} />;
 
   return (
-    <main className="container mx-auto px-6 py-8" style={{ overflow: 'hidden' }}>
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard Analytics</h1>
+    <main className="container mx-auto px-4 sm:px-6 py-8" style={{ overflow: 'hidden' }}>
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8">
+        Dashboard Analytics
+      </h1>
 
       {/* Key Performance Indicators */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <KPICard 
           title="Total Users" 
           value={stats.users} 
@@ -147,22 +151,26 @@ function Dashboard() {
       </div>
 
       {/* Detailed Analytics */}
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Revenue Breakdown */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
           <h2 className="text-xl font-semibold mb-4">Revenue Breakdown</h2>
-          <canvas ref={revenueChartRef}></canvas>
+          <div className="h-64 sm:h-80">
+            <canvas ref={revenueChartRef}></canvas>
+          </div>
         </div>
 
         {/* Bookings Distribution */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
           <h2 className="text-xl font-semibold mb-4">Bookings Distribution</h2>
-          <canvas ref={bookingsChartRef}></canvas>
+          <div className="h-64 sm:h-80">
+            <canvas ref={bookingsChartRef}></canvas>
+          </div>
         </div>
       </div>
 
       {/* Popular Items */}
-      <div className="grid md:grid-cols-2 gap-8 mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mt-6 sm:mt-8">
         <PopularItemCard 
           title="Most Popular Package"
           name={stats.most_popular_package?.name}
@@ -180,10 +188,10 @@ function Dashboard() {
 
 function KPICard({ title, value, change, positive }) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
       <p className="text-sm text-gray-500 mb-2">{title}</p>
       <div className="flex items-center justify-between">
-        <span className="text-2xl font-bold">{value}</span>
+        <span className="text-xl sm:text-2xl font-bold">{value}</span>
         <span className={`text-sm ${positive ? 'text-green-500' : 'text-red-500'}`}>
           {change}
         </span>
@@ -194,7 +202,7 @@ function KPICard({ title, value, change, positive }) {
 
 function PopularItemCard({ title, name, bookings }) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
       <h2 className="text-xl font-semibold mb-4">{title}</h2>
       <div className="space-y-2">
         <p className="text-gray-600">Name: <span className="font-medium">{name || 'N/A'}</span></p>

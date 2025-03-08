@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Users, IndianRupee } from "lucide-react";
 import axios from "../../../../utils/Api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@nextui-org/react";
 import PaymentForm from "../../PaymentForm";
 import PackageDeteils from "./PackageDeteils";
+import { setProfilePackage } from "../../../Toolkit/Slice/apiHomeSlice";
+
 
 function Package() {
   const [bookings, setBookings] = useState([]);
@@ -15,31 +17,69 @@ function Package() {
   const token = useSelector((state) => state.auth.token);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [countdowns, setCountdowns] = useState({});
+  const dispatch = useDispatch();
+  const profile_package = useSelector((state) => state.api.profile_package);
 
   useEffect(() => {
     const fetchBookings = async () => {
-      try {
-        const response = await axios.get("api/booked-package/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      // try {
+      //   const response = await axios.get("api/booked-package/", {
+      //     headers: { Authorization: `Bearer ${token}` },
+      //   });
 
-        console.log("Bookings:", response.data);
-        setBookings(response.data);
-        // Initialize countdowns
-        const initialCountdowns = {};
-        response.data.forEach((booking) => {
-          if (booking.conformed === "Confirmed") {
-            const targetTime = new Date(booking.date).getTime();
-            const now = new Date().getTime();
-            const timeLeft = Math.max(0, targetTime - now); // Ensure no negative time
-            initialCountdowns[booking.id] = timeLeft;
-          }
-        });
-        setCountdowns(initialCountdowns);
-      } catch (err) {
-        setError("Failed to fetch bookings");
-        console.error("Error fetching bookings:", err);
-      } finally {
+      //   console.log("Bookings:", response.data);
+      //   setBookings(response.data);
+      //   const initialCountdowns = {};
+      //   response.data.forEach((booking) => {
+      //     if (booking.conformed === "Confirmed") {
+      //       const targetTime = new Date(booking.date).getTime();
+      //       const now = new Date().getTime();
+      //       const timeLeft = Math.max(0, targetTime - now); // Ensure no negative time
+      //       initialCountdowns[booking.id] = timeLeft;
+      //     }
+      //   });
+      //   setCountdowns(initialCountdowns);
+      // } catch (err) {
+      //   setError("Failed to fetch bookings");
+      //   console.error("Error fetching bookings:", err);
+      // } finally {
+      //   setLoading(false);
+      // }
+
+
+
+
+
+      if (!profile_package) {
+        setLoading(true); 
+        axios
+          .get("api/booked-package/", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((response) => {
+            dispatch(setProfilePackage(response.data));
+            setBookings(response.data);
+            const initialCountdowns = {};
+            response.data.forEach((booking) => {
+              if (booking.conformed === "Confirmed") {
+                const targetTime = new Date(booking.date).getTime();
+                const now = new Date().getTime();
+                const timeLeft = Math.max(0, targetTime - now); 
+                initialCountdowns[booking.id] = timeLeft;
+              }
+            });
+      
+            setCountdowns(initialCountdowns);
+            setLoading(false); 
+          })
+          .catch((error) => {
+            console.error("Error fetching Holiday:", error);
+            setError("Failed to fetch Holiday Requests.");
+            toast.error("Failed to fetch Holiday requests");
+            setLoading(false); 
+          });
+      } else {
+        setBookings(profile_package);
         setLoading(false);
       }
     };

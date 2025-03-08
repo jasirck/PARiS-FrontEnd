@@ -413,66 +413,6 @@ export function PaymentCancel() {
 
 
 
-// const Confetti = ({ count = 50 }) => {
-//   const randomColor = () => {
-//     const colors = [
-//       "#FFD700",
-//       "#FF6B6B",
-//       "#4ECDC4",
-//       "#45B7D1",
-//       "#FDCB6E",
-//       "#6C5CE7",
-//     ];
-//     return colors[Math.floor(Math.random() * colors.length)];
-//   };
-
-//   const confettiVariants = {
-//     initial: (i) => ({
-//       x: Math.random() * 400 - 200,
-//       y: -100,
-//       opacity: 1,
-//       rotate: Math.random() * 360,
-//       scale: Math.random() * 0.5 + 0.5,
-//     }),
-//     animate: (i) => ({
-//       x: Math.random() * 400 - 200,
-//       y: window.innerHeight + 100,
-//       opacity: 0,
-//       rotate: Math.random() * 360,
-//       transition: {
-//         duration: Math.random() * 3 + 2,
-//         delay: i * 0.1,
-//         ease: "easeOut",
-//       },
-//     }),
-//   };
-
-//   return (
-//     <>
-//       {[...Array(count)].map((_, i) => (
-//         <motion.div
-//           key={i}
-//           custom={i}
-//           initial="initial"
-//           animate="animate"
-//           variants={confettiVariants}
-//           style={{
-//             position: "fixed",
-//             top: 0,
-//             left: "50%",
-//             width: "10px",
-//             height: "10px",
-//             backgroundColor: randomColor(),
-//             borderRadius: "50%",
-//             zIndex: 10,
-//           }}
-//         />
-//       ))}
-//     </>
-//   );
-// };
-
-
 // PaymentResult.RefundSuccess.jsx
 const RefundSuccess = ({ refundData, onClose }) => {
   const navigate = useNavigate();

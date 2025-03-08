@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../../utils/Api";
 import VisaDetails from "./VisaDetails";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function Visa({ setIsModal }) {
   const [categories, setCategories] = useState([]);
@@ -9,14 +9,27 @@ function Visa({ setIsModal }) {
   const [sortedVisas, setSortedVisas] = useState([]);
   const [selectedVisa, setSelectedVisa] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
+  const homeData = useSelector((state) => state.api.home);
 
   useEffect(() => {
     const fetchResortsAndCategories = async () => {
-      try {
-        const response = await axios.get("/api/admin-visas/");
-        setSortedVisas(response.data);
-        console.log("Visa", response.data);
+      // try {
+      //   const response = await axios.get("/api/admin-visas/");
+      //   setSortedVisas(response.data);
+
+        if (!homeData.visa) {
+          try {
+            const response = await axios.get("/api/admin-visas/");
+            setSortedVisas(response.data);
+            dispatch(setHomeVisa(response.data));
+          } catch (error) {
+            console.error("Error fetching Visa:", error);
+          }
+        } else {
+          setSortedVisas(homeData.visa);
+        }
 
         const categoryResponse = await axios.get("/api/visa-categories/");
         const fetchedCategories = categoryResponse.data.map((category) => ({
@@ -31,9 +44,7 @@ function Visa({ setIsModal }) {
 
         setCategories(allCategories);
         console.log(allCategories);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      
     };
 
     fetchResortsAndCategories();

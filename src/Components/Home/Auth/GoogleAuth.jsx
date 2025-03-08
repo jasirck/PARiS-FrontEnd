@@ -5,6 +5,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../../Toolkit/Slice/authSlice";
+import { toast } from "sonner";
 
 function GoogleAuth({ setIsModal }){
   const navigate = useNavigate();
@@ -55,12 +56,12 @@ function GoogleAuth({ setIsModal }){
           "Error during authentication:",
           error.response?.data || error.message
         );
-        alert("Authentication failed. Please try again.");
+        toast.error("Authentication failed. Please try again.");
       }
     },
     onError: (error) => {
       console.error("Google login failed:", error);
-      alert("Google login failed. Please try again.");
+      toast.error("Google login failed. Please try again.");
     },
     scope: "openid profile email",
   });

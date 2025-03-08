@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "../../../../utils/Api";
 import PackageDeteils from "./PackageDeteils";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { div } from "framer-motion/client";
+import {setHomePackage} from "../../../Toolkit/Slice/apiHomeSlice"; 
 
 function Package({ setIsModal }) {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -11,21 +12,29 @@ function Package({ setIsModal }) {
   const [packages, setPackages] = useState([]);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false); // To manage loading state
+  const [loading, setLoading] = useState(false); 
+  const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
+  const homeData = useSelector((state) => state.api.home);
 
-  useEffect(() => {
-    const fetchPackages = async () => {
-      setLoading(true);  // Set loading state to true
+  useEffect(() => {const fetchPackages = async () => {
+    setLoading(true); // Set loading state to true
+  
+    if (!homeData.package) {
       try {
         const response = await axios.get("/api/packages/");
         setPackages(response.data);
+        dispatch(setHomePackage(response.data));
       } catch (error) {
         console.error("Error fetching packages:", error);
-      } finally {
-        setLoading(false);  // Set loading state to false once the data is fetched
       }
-    };
+    } else {
+      setPackages(homeData.package);
+    }
+  
+    setLoading(false); // Set loading state to false once the data is fetched
+  };
+  
 
     fetchPackages();
 

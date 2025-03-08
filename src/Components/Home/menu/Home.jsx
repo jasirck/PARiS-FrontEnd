@@ -1,68 +1,101 @@
 import React, { useRef, useState, useEffect } from "react";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import axios from "../../../utils/Api";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setHomePackage,
+  setHomeHoliday,
+  setHomeResort,
+  setHomeVisa,
+} from "../../../Components/Toolkit/Slice/apiHomeSlice";
 
 function Home() {
-  const [packages, setPackages] = useState([]);
-  const [holidays, setHolidays] = useState([]);
-  const [resort, setResort] = useState([]);
+  const dispatch = useDispatch();
+
+  const homeData = useSelector((state) => state.api.home);
 
   useEffect(() => {
-    // Fetch data for packages
-    axios
-      .get("api/packages/")
-      .then((response) => {
-        setPackages(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching packages:", error);
-      });
-
+    if (!homeData.package) {
       axios
-      .get("api/holidays/")
-      .then((response) => {
-        setHolidays(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching packages:", error);
-      });
+        .get("api/packages/")
+        .then((response) => {
+          dispatch(setHomePackage(response.data));
+        })
+        .catch((error) => {
+          console.error("Error fetching packages:", error);
+        });
+    }
 
-    // Fetch data for resorts
-    axios
-      .get("api/resorts/")
-      .then((response) => {
-        setResort(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching resorts:", error);
-      });
-  }, []);
+    if (!homeData.holiday) {
+      axios
+        .get("api/holidays/")
+        .then((response) => {
+          dispatch(setHomeHoliday(response.data));
+        })
+        .catch((error) => {
+          console.error("Error fetching holidays:", error);
+        });
+    }
+
+    if (!homeData.resort) {
+      axios
+        .get("api/resorts/")
+        .then((response) => {
+          dispatch(setHomeResort(response.data));
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching resorts:", error);
+        });
+    }
+    if (!homeData.visa) {
+      axios
+        .get("/api/admin-visas/")
+        .then((response) => {
+          dispatch(setHomeVisa(response.data));
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching resorts:", error);
+        });
+    }
+  }, [
+    dispatch,
+    homeData.package,
+    homeData.holiday,
+    homeData.resort,
+    homeData.visa,
+  ]);
 
   return (
     <div className="bg-[#F2F2F0] mx-4 sm:mx-8 my-2 px-4 sm:px-12 py-6 rounded-3xl">
       <div className="space-y-8">
         <CardComponent
           Offer_Name="Special Packages"
-          Offer_List={packages}
-          resort={false}
+          Offer_List={homeData.package || []}
+          item="package"
         />
         <CardComponent
           Offer_Name="Top Holidays"
-          Offer_List={holidays}
-          resort={false}
+          Offer_List={homeData.holiday || []}
+          item="package"
         />
         <CardComponent
           Offer_Name="Top Resorts"
-          Offer_List={resort}
-          resort={true}
+          Offer_List={homeData.resort || []}
+          item="resort"
+        />
+        <CardComponent
+          Offer_Name="Top Visa"
+          Offer_List={homeData.visa || []}
+          item="visa"
         />
       </div>
     </div>
   );
 }
 
-function CardComponent({ Offer_Name, Offer_List, resort }) {
+function CardComponent({ Offer_Name, Offer_List, item }) {
   const scrollContainerRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -132,9 +165,11 @@ function CardComponent({ Offer_Name, Offer_List, resort }) {
             <div className="relative h-48 overflow-hidden rounded-3xl">
               <img
                 src={
-                  resort
+                  item === "resort"
                     ? `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${pkg.images[0]?.image}`
-                    : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${pkg.first_day_image}`
+                    : item === "package"
+                    ? `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${pkg.first_day_image}`
+                    : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${pkg.place_photo}`
                 }
                 alt={pkg.name}
                 className="w-full h-full p-2 object-contain rounded-3xl transition-transform duration-500 ease-out group-hover:scale-105"
@@ -145,7 +180,7 @@ function CardComponent({ Offer_Name, Offer_List, resort }) {
             </div>
 
             <div className="p-4 transform transition-all duration-300 group-hover:translate-y-1">
-              <h3 className="text-lg font-semibold line-clamp-1 transition-colors duration-300 group-hover:text-blue-600">
+              <h3 className="text-lg font-semibold line-clamp-1 transition-colors duration-300 group-hover:text-gray-600">
                 {pkg.name}
               </h3>
               <p className="text-gray-500 transition-all duration-300 group-hover:text-gray-700">

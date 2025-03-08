@@ -3,11 +3,13 @@ import axios from "../../../../utils/Api";
 import AddVisaModal from "./AddVisa";
 import VisaDetailsModal from "./VisaDetails";
 import VisaEditModal from "./VisaEdit";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@nextui-org/react";
 import { toast } from "sonner";
+import {setVisa} from "../../../Toolkit/Slice/apiHomeSlice";
 
-function Visa({visaId,setVisaId}) {
+
+function Visa({ visaId, setVisaId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [visas, setVisas] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -18,6 +20,8 @@ function Visa({visaId,setVisaId}) {
   const [selectedVisaId, setSelectedVisaId] = useState(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const visa = useSelector((state) => state.api.visa);
 
   const filteredVisas = useMemo(() => {
     if (Array.isArray(visas)) {
@@ -25,39 +29,39 @@ function Visa({visaId,setVisaId}) {
         visa.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    return []; 
+    return [];
   }, [searchQuery, visas]);
-  
 
   useEffect(() => {
     const fetchVisas = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("/api/admin-visas/", {
+
+
+
+
+    setLoading(true);
+    if (!visa) {
+      axios
+        .get("/api/admin-visas/", {
           headers: { Authorization: `Bearer ${token}` },
-        });
-
-        console.log("Visas Data:", response.data); 
-
-        if (response.data) {
+        })
+        .then((response) => {
+          dispatch(setVisa(response.data));
           setVisas(response.data);
-        } else {
-          setError("No visas found.");
-        }
-        setLoading(false);
-        if(visaId){
-          visaId
-          openViewModal(visaId)
-          setVisaId(null)
-        }
-      } catch (err) {
-        setError("Failed to fetch visas.");
-        setLoading(false);
-      }
+        })
+        .catch((error) => {
+          console.error("Error fetching visa:", error);
+          setError("Failed to fetch visa Requests.");
+          toast.error("Failed to fetch visa requests");
+        });
+      setLoading(false);
+    } else {
+      setVisas(visa);
+      setLoading(false);
+    }
     };
 
     fetchVisas();
-  }, [showAddForm]); 
+  }, [showAddForm]);
 
   const openViewModal = (visaId) => {
     setSelectedVisaId(visaId);
@@ -75,28 +79,28 @@ function Visa({visaId,setVisaId}) {
   };
 
   if (loading) {
-    return <div>Loading visas...</div>;
+    return <div className="p-4 text-center text-gray-600">Loading visas...</div>;
   }
 
   if (error) {
-    return <div className="text-red-600">{error}</div>;
+    return <div className="p-4 text-center text-red-600">{error}</div>;
   }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
       {/* Header with Search and Add New Button */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
         <h2 className="text-xl font-semibold text-gray-800">Visas</h2>
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <input
             type="text"
             placeholder="Search by name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-[#D4D4CE] bg-[#F6F6F6] p-2 rounded-lg text-[#023246] placeholder-[#287094] focus:ring-2 focus:ring-[#287094] focus:outline-none shadow-sm transition duration-300"
+            className="w-full md:w-64 border border-[#D4D4CE] bg-[#F6F6F6] p-2 rounded-lg text-[#023246] placeholder-[#287094] focus:ring-2 focus:ring-[#287094] focus:outline-none shadow-sm transition duration-300"
           />
           <Button
-            className="bg-[#1e546f] text-white px-4 py-2 rounded-lg"
+            className="w-full md:w-auto bg-[#1e546f] text-white px-4 py-2 rounded-lg hover:bg-[#023246] transition-colors"
             onClick={() => setShowAddForm(!showAddForm)}
           >
             {showAddForm ? "Cancel" : "Add New Visa"}
@@ -104,6 +108,7 @@ function Visa({visaId,setVisaId}) {
         </div>
       </div>
 
+      {/* Add New Visa Form */}
       {showAddForm && (
         <div className="mb-4 p-4 border border-gray-300 rounded-lg">
           <AddVisaModal
@@ -114,53 +119,95 @@ function Visa({visaId,setVisaId}) {
       )}
 
       {/* Visas Table */}
-      <div className="grid grid-cols-5 gap-4 text-gray-700 font-semibold border-b border-gray-300">
-        <div className="ml-8 -mr-4">Id</div>
-        <div>Visa</div>
-        <div>Visa Days&Price</div>
-        <div>Category</div>
-        <div>Action</div>
+      <div className="overflow-x-auto">
+        {/* Table Header */}
+        <div className="hidden md:grid grid-cols-5 gap-4 text-gray-700 font-semibold border-b border-gray-300 p-2">
+          <div className="ml-8 -mr-4">Id</div>
+          <div>Visa</div>
+          <div>Visa Days & Price</div>
+          <div>Category</div>
+          <div>Action</div>
+        </div>
+
+        {/* Visas List */}
+        <div>
+          {filteredVisas.length === 0 ? (
+            <div className="p-4 text-center text-gray-600">No visas found</div>
+          ) : (
+            filteredVisas.map((visa) => (
+              <div
+                key={visa.id}
+                className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all p-2"
+              >
+                {/* Mobile View: Card Layout */}
+                <div className="md:hidden space-y-2">
+                  <div className="font-semibold text-gray-800">ID: {visa.id}</div>
+                  <div className="text-sm text-gray-600">Visa: {visa.name}</div>
+                  <div className="text-sm text-gray-600">
+                    Days & Price:{" "}
+                    {visa.visa_days && visa.visa_days.length > 0
+                      ? visa.visa_days.map((day, index) => (
+                          <div key={index}>
+                            {day.days} {day.price}{" "}
+                          </div>
+                        ))
+                      : "N/A"}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Category: {visa.category.name || "N/A"}
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      onClick={() => openViewModal(visa.id)}
+                      className="bg-[#4a4a4a] text-white px-3 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                    >
+                      View
+                    </Button>
+                    <Button
+                      onClick={() => openEditModal(visa.id)}
+                      className="bg-[#4a4a4a] text-white px-3 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Desktop View: Table Layout */}
+                <div className="hidden md:block ml-8 -mr-4">{visa.id}</div>
+                <div className="hidden md:block">{visa.name}</div>
+                <div className="hidden md:block">
+                  {visa.visa_days && visa.visa_days.length > 0
+                    ? visa.visa_days.map((day, index) => (
+                        <div key={index}>
+                          {day.days} {day.price}{" "}
+                        </div>
+                      ))
+                    : "N/A"}
+                </div>
+                <div className="hidden md:block">
+                  {visa.category.name || "N/A"}
+                </div>
+                <div className="hidden md:flex gap-2">
+                  <Button
+                    onClick={() => openViewModal(visa.id)}
+                    className="bg-[#4a4a4a] text-white px-3 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                  >
+                    View
+                  </Button>
+                  <Button
+                    onClick={() => openEditModal(visa.id)}
+                    className="bg-[#4a4a4a] text-white px-3 py-2 rounded-lg hover:bg-[#333333] transition-colors"
+                  >
+                    Edit
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
-      <div>
-        {filteredVisas.length === 0 ? (
-          <div>No visas found</div>
-        ) : (
-          filteredVisas.map((visa) => (
-            <div
-              key={visa.id}
-              className="grid -mx-4 grid-cols-5 gap-2 items-center py-3 border-b border-gray-200 hover:bg-gray-50 transition-all"
-            > <div className="ml-14 -mr-8">{visa.id}</div>
-              <div className="mx-4">{visa.name}</div>
-              <div>
-                {visa.visa_days && visa.visa_days.length > 0
-                  ? visa.visa_days.map((day, index) => (
-                      <div key={index}>
-                        {day.days} {day.price}{" "}
-                      </div>
-                    ))
-                  : "N/A"}
-              </div>
-              <div>{visa.category.name || "N/A"}</div>
-              <div className="gap-1 flex">
-                <Button
-                  onClick={() => openViewModal(visa.id)}
-                  className="bg-[#4a4a4a] text-white -ml-2 px-3 py-2 rounded-lg"
-                >
-                  View
-                </Button>
-                <Button
-                  onClick={() => openEditModal(visa.id)}
-                  className="bg-[#4a4a4a] text-white px-3 py-2 rounded-lg pl-4"
-                >
-                  Edit
-                </Button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
+      {/* Modals */}
       <VisaDetailsModal
         visaId={selectedVisaId}
         isOpen={viewModalOpen}

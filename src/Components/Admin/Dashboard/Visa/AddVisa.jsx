@@ -3,7 +3,7 @@ import axios from "../../../../utils/Api";
 import { uploadToCloudinary } from "../../../../utils/cloudinaryUtils";
 import { toast } from "sonner";
 import { Form, Input, Select, SelectItem, Button } from "@nextui-org/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Modal,
   ModalContent,
@@ -11,6 +11,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@nextui-org/modal";
+import {setVisa,setsliceVisa} from "../../../Toolkit/Slice/apiHomeSlice";
 
 const AddVisaModal = ({ isOpen, onClose }) => {
   const [categories, setCategories] = useState([]);
@@ -28,6 +29,7 @@ const AddVisaModal = ({ isOpen, onClose }) => {
     place_photo: "",
     visa_days: defaultVisaDays,
   });
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -139,7 +141,8 @@ const AddVisaModal = ({ isOpen, onClose }) => {
       await axios.post("api/admin-visas/", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+      dispatch(setVisa(null));
+      dispatch(setsliceVisa(null));
       toast.success("Visa package created successfully!");
       onClose();
     } catch (error) {

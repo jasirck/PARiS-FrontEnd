@@ -24,6 +24,7 @@ function AdminLogin () {
 
       console.log(response.data); 
       
+      
       dispatch(login({
         user: response.data.user,
         token: response.data.access,
