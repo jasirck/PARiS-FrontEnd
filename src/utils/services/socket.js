@@ -1,3 +1,3 @@
 
-export const BASE_URL = "http://127.0.0.1:8000";
-export const WS_BASE_URL = "ws://127.0.0.1:8000";
+export const BASE_URL = "https://54.234.139.197/";
+export const WS_BASE_URL = "wss://54.234.139.197/";

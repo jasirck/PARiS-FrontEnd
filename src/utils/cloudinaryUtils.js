@@ -31,7 +31,7 @@ export const uploadToCloudinary = async (file) => {
 
 export const deleteFromCloudinary = async (imageId) => {
   try {
-    const response = await fetch("http://localhost:8000/api/delete-image/", {
+    const response = await fetch("https://54.234.139.197/api/delete-image/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

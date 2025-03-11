@@ -12,6 +12,7 @@ function Resort({ setIsModal }) {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [loading, setLoading] = useState(false); 
   const [selectedResort, setSelectedResort] = useState(null);
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
@@ -22,19 +23,21 @@ function Resort({ setIsModal }) {
   useEffect(() => {
     const fetchResortsAndCategories = async () => {
       try {;
-        
+        setLoading(true);  
         if (!homeData.resort) {
           try {
             const response = await axios.get("/api/resorts/");
             setResorts(response.data);
             setFilteredResorts(response.data);
             dispatch(setHomeResort(response.data));
+            setLoading(false); 
           } catch (error) {
             console.error("Error fetching Holidays:", error);
           }
         } else {
           setResorts(homeData.resort);
           setFilteredResorts(homeData.resort);
+          setLoading(false); 
         }
 
         const categoryResponse = await axios.get("/api/resort-categories/");
