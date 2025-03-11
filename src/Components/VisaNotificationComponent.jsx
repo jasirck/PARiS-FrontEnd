@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'; // For animations
 const MAX_NOTIFICATIONS = 50;
 
 const VisaNotificationComponent = () => {
-    const { messages, connectionStatus } = useWebSocket('ws://127.0.0.1:8000/ws/visa_notifications/');
+    const { messages, connectionStatus } = useWebSocket('wss://54.234.139.197/ws/visa_notifications/');
     const [notifications, setNotifications] = useState([]);
     const [isExpanded, setIsExpanded] = useState(true);
 
