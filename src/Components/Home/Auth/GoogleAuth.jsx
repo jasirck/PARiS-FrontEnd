@@ -31,7 +31,7 @@ function GoogleAuth({ setIsModal }){
 
         // Send user info to your backend for login/registration
         const backendResponse = await axios.post(
-          "http://127.0.0.1:8000/api/auth/google/",
+          "https://54.234.139.197/api/auth/google/",
           { user: userInfo }
         );
 
