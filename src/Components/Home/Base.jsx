@@ -297,7 +297,7 @@ function Base() {
       <div className="flex-grow bg-[#F2F2F0] mx-4 sm:mx-8 my-1 px-2 sm:px-6 md:px-12 py-6 shadow-inner rounded-3xl">
         <Routes>
           <Route index element={<Home setIsModal={setIsModal} />} />
-          <Route path="home" element={<Home setIsModal={setIsModal} />} />
+          <Route path="home/" element={<Home setIsModal={setIsModal} />} />
           <Route path="home/holiday" element={<Holiday setIsModal={setIsModal} />} />
           <Route path="home/packages" element={<Packages setIsModal={setIsModal} />} />
           <Route path="home/resort" element={<Resort setIsModal={setIsModal} />} />
