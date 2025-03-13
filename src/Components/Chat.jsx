@@ -20,7 +20,7 @@ const UserChat = ({ onClose }) => {
 
   useEffect(() => {
     const connectWebSocket = () => {
-      socketRef.current = new WebSocket(`${WS_BASE_URL}/ws/chat/?token=${token}`);
+      socketRef.current = new WebSocket(`${WS_BASE_URL}ws/chat/?token=${token}`);
       socketRef.current.onopen = () => {
         setIsConnected(true);
       };

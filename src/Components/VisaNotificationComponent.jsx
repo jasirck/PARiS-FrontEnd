@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import useWebSocket from '../hooks/useWebSocket';  
 import { Bell } from 'lucide-react'; // Using lucide-react for icons
 import { motion, AnimatePresence } from 'framer-motion'; // For animations
+import  {WS_BASE_URL}  from "../utils/services/socket.js";
 
 const MAX_NOTIFICATIONS = 50;
 
 const VisaNotificationComponent = () => {
-    const { messages, connectionStatus } = useWebSocket('wss://54.234.139.197/ws/visa_notifications/');
+    const { messages, connectionStatus } = useWebSocket(`${WS_BASE_URL}ws/visa_notifications/`);
     const [notifications, setNotifications] = useState([]);
     const [isExpanded, setIsExpanded] = useState(true);
 
