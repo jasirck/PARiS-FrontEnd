@@ -263,7 +263,7 @@ const AdminChat = () => {
       // const wsHost = process.env.REACT_APP_WS_HOST || window.location.hostname;
       // const wsPort = process.env.REACT_APP_WS_PORT || '8000';
       
-      socketRef.current = new WebSocket(`${WS_BASE_URL}/ws/chat/?token=${token}`);
+      socketRef.current = new WebSocket(`${WS_BASE_URL}ws/chat/?token=${token}`);
 
       socketRef.current.onopen = () => {
         setConnectionError(null);
