@@ -31,7 +31,7 @@ function GoogleAuth({ setIsModal }){
 
         // Send user info to your backend for login/registration
         const backendResponse = await axios.post(
-          "https://54.234.139.197/api/auth/google/",
+          "https://api.paristoursandtravels.in/api/auth/google/",
           { user: userInfo }
         );
 

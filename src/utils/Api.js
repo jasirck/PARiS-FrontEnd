@@ -3,7 +3,7 @@ import { logout, login,updateToken } from '../Components/Toolkit/Slice/authSlice
 import store from '../Components/Toolkit/store'; 
 
 const axiosInstance = axios.create({
-    baseURL: "https://54.234.139.197/", 
+    baseURL: "https://api.paristoursandtravels.in/", 
     headers: {
         "Content-Type": "application/json",
     },
@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
             console.log(refresh_token);
             if (refresh_token) {
                 try {
-                    const refreshResponse = await axios.post('https://54.234.139.197/api/token/refresh/', {
+                    const refreshResponse = await axios.post('https://api.paristoursandtravels.in/api/token/refresh/', {
                         refresh_token: refresh_token
                     });
 
