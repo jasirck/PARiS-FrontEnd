@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     users : null,
+    admins : null,
     package:  null,
     holiday:  null,
     resort: null,  
@@ -27,6 +28,9 @@ const appSlice = createSlice({
     reducers: {
         setUsers(state, action) {
             state.users = action.payload;
+        },
+        setAdmins(state, action) {
+            state.admins = action.payload;
         },
         setPackage(state, action) {
             state.package = action.payload;
@@ -84,6 +88,7 @@ const appSlice = createSlice({
 
 export const {
     setUsers,
+    setAdmins,
     setPackage,
     setHoliday,
     setResort,

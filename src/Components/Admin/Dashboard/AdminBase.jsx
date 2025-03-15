@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import Dashboard from "./Home/Dashboard";
 import Packages from "./Package/Packages";
 import { useDispatch, useSelector } from "react-redux";
 import Users from "./User/Users";
+import Admins from "./User/Admins";
 import Resorts from "./Resort/Resort";
 import Holiday from "./Holiday/Holiday";
 import Category from "./Category/PackageCategory";
@@ -20,6 +20,8 @@ import BookedVisa from "./Booked VIsa/BookedVIsa";
 import AdminChat from "./Chat";
 import { IoChatbubblesSharp } from "react-icons/io5";
 import { FaBars } from "react-icons/fa";
+
+
 
 function AdminBase() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -83,6 +85,9 @@ function AdminBase() {
       case "admin-chat":
         setActiveButton("Admin Chat");
         break;
+      case "admins":
+        setActiveButton("Admins");
+        break;
       default:
         console.warn(`Unknown route: ${firstWordAfterAdmin}`);
     }
@@ -96,7 +101,7 @@ function AdminBase() {
   const handleButtonClick = (button, path) => {
     setActiveButton(button);
     navigate(path);
-    setSidebarOpen(false); // Close sidebar on mobile after navigation
+    setSidebarOpen(false); 
   };
 
   const handletrackid = (page, path, id, type) => {
@@ -121,7 +126,7 @@ function AdminBase() {
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:block z-20`}
       >
-        <div className="p-4">
+        <div className="p-4 h-full flex flex-col">
           <div className="flex justify-center">
             <img
               src="/paris_logo.png"
@@ -129,7 +134,8 @@ function AdminBase() {
               className="w-28 h-28 object-contain"
             />
           </div>
-          <nav className="space-y-1">
+
+          <nav className="space-y-1 overflow-y-auto flex-1">
             <Button
               className={`w-full px-4 py-2 text-lg font-medium text-left ${
                 activeButton === "Dashboard"
@@ -150,6 +156,18 @@ function AdminBase() {
             >
               Users
             </Button>
+            <Button
+              className={`w-full px-4 py-2 text-lg font-medium text-left ${
+                activeButton === "Admins"
+                  ? "bg-[#565656] text-white"
+                  : "bg-transparent text-gray-700"
+              } hover:bg-[#4a4a4a] hover:text-white rounded-lg transition-all`}
+              onClick={() => handleButtonClick("Admins", "/admin/admins")}
+            >
+              Admins
+            </Button>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-500">Categorys</p>
             <Button
               className={`w-full px-4 py-2 text-lg font-medium text-left ${
                 activeButton === "Package Category"
@@ -186,6 +204,7 @@ function AdminBase() {
             >
               Visa Category
             </Button>
+            </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-500">Services</p>
               <Button
@@ -352,6 +371,7 @@ function AdminBase() {
                 }
               />
               <Route path="/users" element={<Users />} />
+              <Route path="/admins" element={<Admins />} />
               <Route
                 path="/resort"
                 element={
