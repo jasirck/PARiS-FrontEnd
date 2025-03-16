@@ -14,6 +14,9 @@ import {
   PaymentCancel,
   PaymentSuccess,
 } from "./Components/Home/PaymentResult";
+import PrivacyPolicy from "./Components/legal/PrivacyPolicy";
+import TermsOfService from "./Components/legal/TermsOfService";
+import UserDataDeletion from "./Components/legal/UserDataDeletion";
 
 
 function App() {
@@ -29,6 +32,9 @@ function App() {
             <Route path="/adminlogin" element={<AdminLogin />} />
             <Route path="/success" element={<PaymentSuccess />} />
             <Route path="/cancel" element={<PaymentCancel />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/user-data-deletion" element={<UserDataDeletion />} />
           </Routes>
         </Router>
       

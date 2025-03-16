@@ -19,6 +19,7 @@ import Flights from "./menu/Flights/Flights";
 import Visa from "./menu/Visa/Visa";
 import VisaNotificationComponent from "../VisaNotificationComponent";
 import { IoChatbubblesSharp } from "react-icons/io5";
+import {  FaWhatsapp } from "react-icons/fa";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import UserChat from "../Chat";
 
@@ -318,7 +319,7 @@ function Base() {
       {/* Chat Component */}
       {chat && <UserChat onClose={() => setChat(false)} />}
 
-      {/* Footer Section */}
+      {/* Footer Section
       <footer className="bg-[#1E546F] text-white w-11/12 mx-auto pb-6 sm:pb-8 p-6 sm:p-8 rounded-3xl my-8 sm:my-12 mt-auto">
         <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-8">
           <div>
@@ -362,7 +363,78 @@ function Base() {
         <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm">
           © 2024 PARiS Tours & Travels. All rights reserved.
         </div>
-      </footer>
+      </footer>*/}
+
+
+
+<footer className="bg-[#1E546F] text-white w-11/12 mx-auto pb-6 sm:pb-8 p-6 sm:p-8 rounded-3xl my-8 sm:my-12 mt-auto">
+      <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-8">
+        {/* Company Info */}
+        <div>
+          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+            PARiS Tours & Travels
+          </h2>
+          <p className="mb-2 text-sm sm:text-base">
+            Near Kotak Mahindra Bank, Nut Street, Vatakara, Calicut, 673104
+          </p>
+          <p className="text-sm sm:text-base">Near Mahe, Azhiyur Chungam, 673309</p>
+        </div>
+
+        {/* Contact Section */}
+        <div>
+          <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Contact</h3>
+          <p className="mb-2 text-sm sm:text-base">Phone: 9207626627</p>
+          <p className="mb-2 text-sm sm:text-base">Phone: 9497714746</p>
+          <p className="mb-2 text-sm sm:text-base">Phone: 7306868537, 8606563820</p>
+
+          {/* Email */}
+          <div className="mt-4 flex items-center">
+            <HiMail className="mr-2 text-lg" />
+            <a
+              href="mailto:paristourstravels@gmail.com"
+              className="text-inherit hover:underline text-sm sm:text-base"
+            >
+              paristourstravels@gmail.com
+            </a>
+          </div>
+
+          {/* Instagram */}
+          <div className="flex items-center mt-2">
+            <FaSquareInstagram className="mr-2 text-lg" />
+            <a
+              href="https://www.instagram.com/paris_tours_travels"
+              className="text-inherit hover:underline text-sm sm:text-base"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @paris_tours_travels
+            </a>
+          </div>
+
+          {/* WhatsApp */}
+          <div className="flex items-center mt-2">
+            <FaWhatsapp className="mr-2 text-lg text-green-400" />
+            <a
+              href="https://wa.me/9207626627"
+              className="text-inherit hover:underline text-sm sm:text-base"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              9497714746
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Copyright */}
+      <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm">
+        © 2024 PARiS Tours & Travels. All rights reserved.
+      </div>
+    </footer>
+
+
+
+
 
       {/* Modals */}
       {isModal.length > 0 && (
