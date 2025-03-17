@@ -180,13 +180,25 @@ const AddHolidayModal = ({ isOpen, onClose }) => {
         dayPlans.map(async (dayPlan) => {
           if (dayPlan.place_photo instanceof File) {
             const uploadedImage = await uploadToCloudinary(dayPlan.place_photo);
+            
+            if (!uploadedImage || !uploadedImage.secure_url) {
+              console.error("Image upload failed", uploadedImage);
+              return dayPlan; // Return unchanged to prevent errors
+            }
+      
             const imageUrl = uploadedImage.secure_url;
-            const imageId = imageUrl.match(/\/([^\/]+)\.jpg/)[1];
-            dayPlan.place_photo = imageId;
+            const match = imageUrl.match(/\/([^\/]+)\.(jpg|jpeg|png|webp|gif)$/);
+      
+            if (match) {
+              dayPlan.place_photo = match[1]; // Extract Image ID
+            } else {
+              console.error("Unexpected image URL format:", imageUrl);
+            }
           }
           return dayPlan;
         })
       );
+      
 
       formData.append("days_holiday", JSON.stringify(updatedDays));
 
