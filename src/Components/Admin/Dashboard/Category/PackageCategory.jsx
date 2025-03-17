@@ -126,6 +126,11 @@ function PackageCategory() {
       {loading && (
         <div className="text-center text-[#287094]">Loading categories...</div>
       )}
+      {!loading && categories.length === 0 && (
+        <div className="text-center text-[#023246] py-6">
+          No categories found. Create a new category to get started.
+        </div>
+      )}
 
       {!loading && categories.length > 0 && (
         <div>
