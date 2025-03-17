@@ -8,9 +8,11 @@ import {
   setHomeResort,
   setHomeVisa,
 } from "../../../Components/Toolkit/Slice/apiHomeSlice";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const homeData = useSelector((state) => state.api.home);
 
@@ -74,25 +76,25 @@ function Home() {
           Offer_Name="Special Packages"
           Offer_List={homeData.package || []}
           item="package"
-          naviate = "home/packages"
+          naviate = "/home/packages"
         />
         <CardComponent
           Offer_Name="Top Holidays"
           Offer_List={homeData.holiday || []}
           item="package"
-          naviate = "home/holiday"
+          naviate = "/home/holiday"
         />
         <CardComponent
           Offer_Name="Top Resorts"
           Offer_List={homeData.resort || []}
           item="resort"
-          naviate = "home/resort"
+          naviate = "/home/resort"
         />
         <CardComponent
           Offer_Name="Top Visa"
           Offer_List={homeData.visa || []}
           item="visa"
-          naviate = "home/visa"
+          naviate = "/home/visa"
         />
       </div>
     </div>
@@ -163,11 +165,12 @@ function CardComponent({ Offer_Name, Offer_List, item }) {
       >
         {Offer_List.map((pkg, index) => (
           <div
+          onClick={() => navigate(naviate)}
             key={index}
             className="group relative min-w-[280px] max-w-[280px] bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 ease-in-out  transform hover:-translate-y-2"
           >
             <div className="relative h-48 overflow-hidden rounded-3xl"
-            onClick={() => navigate(naviate)}>
+            >
               <img
                 src={
                   item === "resort"
