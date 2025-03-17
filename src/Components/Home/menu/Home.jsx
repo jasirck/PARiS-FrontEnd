@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 function Home() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  
 
   const homeData = useSelector((state) => state.api.home);
 
@@ -101,10 +101,11 @@ function Home() {
   );
 }
 
-function CardComponent({ Offer_Name, Offer_List, item }) {
+function CardComponent({ Offer_Name, Offer_List, item,naviate }) {
   const scrollContainerRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const navigate = useNavigate();
 
   const checkScroll = () => {
     if (scrollContainerRef.current) {
@@ -161,11 +162,12 @@ function CardComponent({ Offer_Name, Offer_List, item }) {
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           WebkitOverflowScrolling: "touch",
+
         }}
+        onClick={() => navigate(naviate)}
       >
         {Offer_List.map((pkg, index) => (
           <div
-          onClick={() => navigate(naviate)}
             key={index}
             className="group relative min-w-[280px] max-w-[280px] bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 ease-in-out  transform hover:-translate-y-2"
           >
