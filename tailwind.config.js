@@ -1,17 +1,3 @@
-// module.exports = {
-//   content: [
-//     "./src/**/*.{js,jsx,ts,tsx}", // Make sure to include all relevant files
-//   ],
-//   theme: {
-//     extend: {
-//       fontFamily: {
-//         ubuntu: ['Ubuntu', 'sans-serif'], // Add Ubuntu as a custom font
-//       },
-//     },
-//   },
-//   plugins: [],
-// };
-
 
 // tailwind.config.js
 const { nextui } = require("@nextui-org/react");
@@ -19,19 +5,18 @@ const { nextui } = require("@nextui-org/react");
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}", // Include NextUI's theme
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}", 
   ],
   theme: {
     extend: {
       fontFamily: {
-        ubuntu: ['Ubuntu', 'sans-serif'], // Preserve your custom font
+        ubuntu: ['Ubuntu', 'sans-serif'], 
       },
       colors: {
-        primary: "#287094", // Preserve your primary color if needed
-        // Add other custom colors if necessary
+        primary: "#287094", 
       },
     },
   },
-  darkMode: "class", // Retain dark mode support
-  plugins: [nextui()], // Add NextUI plugin
+  darkMode: "class", 
+  plugins: [nextui()], 
 };
