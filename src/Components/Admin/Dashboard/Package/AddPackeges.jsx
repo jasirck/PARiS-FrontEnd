@@ -17,8 +17,10 @@ import {
   ModalFooter,
 } from "@nextui-org/react";
 import { toast } from "sonner";
-import {setPackage,setslicePackages} from "../../../Toolkit/Slice/apiHomeSlice";
-
+import {
+  setPackage,
+  setslicePackages,
+} from "../../../Toolkit/Slice/apiHomeSlice";
 
 const schema = yup.object().shape({
   name: yup.string().required("Package name is required."),
@@ -177,9 +179,22 @@ const AddPackageModal = ({ isOpen, onClose }) => {
         dayPlans.map(async (dayPlan) => {
           if (dayPlan.place_photo instanceof File) {
             const uploadedImage = await uploadToCloudinary(dayPlan.place_photo);
+
+            if (!uploadedImage || !uploadedImage.secure_url) {
+              console.error("Image upload failed", uploadedImage);
+              return dayPlan; // Return unchanged to prevent errors
+            }
+
             const imageUrl = uploadedImage.secure_url;
-            const imageId = imageUrl.match(/\/([^\/]+)\.jpg/)[1];
-            dayPlan.place_photo = imageId;
+            const match = imageUrl.match(
+              /\/([^\/]+)\.(jpg|jpeg|png|webp|gif)$/
+            );
+
+            if (match) {
+              dayPlan.place_photo = match[1]; // Extract Image ID
+            } else {
+              console.error("Unexpected image URL format:", imageUrl);
+            }
           }
           return dayPlan;
         })
@@ -212,7 +227,7 @@ const AddPackageModal = ({ isOpen, onClose }) => {
   return (
     <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
       <ModalContent>
-        <div style={{ marginTop: '48rem' }}>
+        <div style={{ marginTop: "48rem" }}>
           <ModalHeader className="text-3xl font-extrabold text-[#287094]">
             Add New Package
           </ModalHeader>
