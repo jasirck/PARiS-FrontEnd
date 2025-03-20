@@ -101,7 +101,6 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
   const duration = formatDuration(flight.departure.scheduled, flight.arrival.scheduled);
   const price = (duration.hours * 60 + duration.minutes) * 27 * 1.05;
   const handleConfirm = async (data) => {
-    console.log('flight', flight);
     
     setFlightData({
         
