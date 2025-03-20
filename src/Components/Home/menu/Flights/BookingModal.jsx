@@ -61,7 +61,6 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
         arrival_date: '',
         price: '',
     });
-    console.log("flight", flight);
     
   const {
     control,

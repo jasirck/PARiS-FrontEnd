@@ -29,6 +29,8 @@ const BookedFlightDetails = () => {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {
+            console.log("Booked Flights:", response.data);
+            
             dispatch(setProfileFlight(response.data));
             setBookedFlights(response.data);
       
@@ -61,10 +63,10 @@ const BookedFlightDetails = () => {
   }, []);
 
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case "pending":
+    switch (status) {
+      case "Pending":        
         return "bg-[#F6F6F6] text-[#023246]";
-      case "confirmed":
+      case "Confirmed":
         return "bg-green-600 text-white";
       default:
         return "bg-red-500 text-white";
