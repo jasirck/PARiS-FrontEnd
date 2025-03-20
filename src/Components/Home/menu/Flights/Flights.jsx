@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import axios from "../../../../utils/Api";
 import BookingModal from "./BookingModal";
 import { useSelector } from "react-redux";
+import FlightDetailsModal from "./FlightDetailsModal";
 import { toast } from 'sonner';
 
 // Utility Functions
@@ -33,106 +34,6 @@ const formatDateTime = (dateTimeString) => {
   };
 };
 
-// // Flight Card Component
-// const FlightCard = ({ flight, setIsModal }) => {
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const departure = formatDateTime(flight.departure.scheduled);
-//   const arrival = formatDateTime(flight.arrival.scheduled);
-//   const duration = formatDuration(flight.departure.scheduled, flight.arrival.scheduled);
-//   const price = (duration.hours * 60 + duration.minutes) * 27 * 1.05;
-//   const [selectedFlight, setSelectedFlight] = useState(null);
-//   const token = useSelector((state) => state.auth.token);
-
-//   const handleCloseModal = () => {
-//     setIsModalOpen(false);
-//   };
-
-//   const handleSelectFlight = (flight) => {
-//     if (!token) {
-//       setIsModal("login");
-//       return;
-//     }
-//     setSelectedFlight(flight);
-//     setIsModalOpen(true);
-//   };
-
-//   return (
-//     <motion.div
-//       initial={{ opacity: 0, y: 20 }}
-//       animate={{ opacity: 1, y: 0 }}
-//       transition={{ duration: 0.3 }}
-//       whileHover={{ scale: 1.01 }}
-//       className="bg-white rounded-xl p-4 md:p-6 shadow-lg mb-4 hover:shadow-xl border border-[#D4D4CE]"
-//     >
-//       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-center">
-//         <div className="space-y-2">
-//           <div className="flex items-center gap-2">
-//             <h3 className="text-lg font-semibold text-[#023246]">
-//               {flight.airline.name}
-//             </h3>
-//           </div>
-//           <div className="flex flex-col text-sm text-[#287094]">
-//             <span>Flight {flight.flight.number}</span>
-//             <span>{flight.aircraft?.model || 'Aircraft'}</span>
-//           </div>
-//         </div>
-
-//         <div className="text-center space-y-1">
-//           <p className="text-2xl font-bold text-[#023246]">{departure.time}</p>
-//           <p className="text-sm text-[#287094]">{flight.departure.iata}</p>
-//           <p className="text-xs text-gray-500">{departure.date}</p>
-//         </div>
-
-//         <div className="flex flex-col items-center gap-2">
-//           <div className="w-full h-0.5 bg-[#D4D4CE] relative">
-//             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white p-1 rounded-full">
-//               <IoAirplane className="text-[#287094] text-xl rotate-45" />
-//             </div>
-//           </div>
-//           <Tooltip content={`Flight Duration: ${duration.hours}h ${duration.minutes}m`}>
-//             <div className="text-center">
-//               <span className="text-sm font-medium text-[#287094]">
-//                 {duration.hours}h {duration.minutes}m
-//               </span>
-//               <p className="text-xs text-gray-500">Non-stop</p>
-//             </div>
-//           </Tooltip>
-//         </div>
-
-//         <div className="text-center space-y-1">
-//           <p className="text-2xl font-bold text-[#023246]">{arrival.time}</p>
-//           <p className="text-sm text-[#287094]">{flight.arrival.iata}</p>
-//           <p className="text-xs text-gray-500">{arrival.date}</p>
-//         </div>
-
-//         <div className="space-y-3">
-//           <div className="text-right">
-//             <p className="text-2xl font-bold text-[#287094]">
-//               ₹{price.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-//             </p>
-//             <p className="text-xs text-gray-500">per person</p>
-//           </div>
-//           <Button
-//             size="lg"
-//             className="w-full bg-[#287094] text-white hover:bg-[#023246] transition-all duration-300"
-//             onClick={() => handleSelectFlight(flight)}
-//           >
-//             Book Now
-//           </Button>
-//         </div>
-//       </div>
-
-//       <BookingModal
-//         isOpen={isModalOpen}
-//         onClose={handleCloseModal}
-//         flight={flight}
-//       />
-//     </motion.div>
-//   );
-// };
-
-
-// Modified FlightCard Component
 const FlightCard = ({ flight, setIsModal }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -157,6 +58,7 @@ const FlightCard = ({ flight, setIsModal }) => {
   };
 
   const handleViewDetails = () => {
+    setSelectedFlight(flight); 
     setIsDetailsModalOpen(true);
   };
 
@@ -168,7 +70,8 @@ const FlightCard = ({ flight, setIsModal }) => {
       whileHover={{ scale: 1.01 }}
       className="bg-white rounded-xl p-4 md:p-6 shadow-lg mb-4 hover:shadow-xl border border-[#D4D4CE]"
     >
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-center"
+      onClick={handleViewDetails}>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-[#023246]">
@@ -216,15 +119,6 @@ const FlightCard = ({ flight, setIsModal }) => {
             </p>
             <p className="text-xs text-gray-500">per person</p>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              size="md"
-              variant="flat"
-              className="w-full text-[#287094] border border-[#287094]"
-              onClick={handleViewDetails}
-            >
-              View Details
-            </Button>
             <Button
               size="md"
               className="w-full bg-[#287094] text-white hover:bg-[#023246] transition-all duration-300"
@@ -232,11 +126,9 @@ const FlightCard = ({ flight, setIsModal }) => {
             >
               Book Now
             </Button>
-          </div>
         </div>
       </div>
 
-      {/* Original Booking Modal */}
       <BookingModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -247,15 +139,12 @@ const FlightCard = ({ flight, setIsModal }) => {
       <FlightDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => setIsDetailsModalOpen(false)}
-        flight={flight}
+        flight={selectedFlight} // Change this from flight to selectedFlight
         onBookNow={handleSelectFlight}
       />
     </motion.div>
   );
 };
-
-
-
 
 
 // Search Form Component
@@ -451,3 +340,9 @@ const Flights = ({ setIsModal }) => {
 };
 
 export default Flights;
+
+
+
+
+
+
