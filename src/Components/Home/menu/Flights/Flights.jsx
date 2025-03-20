@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import axios from "../../../../utils/Api";
 import BookingModal from "./BookingModal";
 import { useSelector } from "react-redux";
+import FlightDetailsModal from "./FlightDetailsModal";
 import { toast } from 'sonner';
 
 // Utility Functions
@@ -33,9 +34,9 @@ const formatDateTime = (dateTimeString) => {
   };
 };
 
-// Flight Card Component
 const FlightCard = ({ flight, setIsModal }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const departure = formatDateTime(flight.departure.scheduled);
   const arrival = formatDateTime(flight.arrival.scheduled);
   const duration = formatDuration(flight.departure.scheduled, flight.arrival.scheduled);
@@ -56,6 +57,11 @@ const FlightCard = ({ flight, setIsModal }) => {
     setIsModalOpen(true);
   };
 
+  const handleViewDetails = () => {
+    setSelectedFlight(flight); 
+    setIsDetailsModalOpen(true);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -64,7 +70,8 @@ const FlightCard = ({ flight, setIsModal }) => {
       whileHover={{ scale: 1.01 }}
       className="bg-white rounded-xl p-4 md:p-6 shadow-lg mb-4 hover:shadow-xl border border-[#D4D4CE]"
     >
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-center"
+      onClick={handleViewDetails}>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-[#023246]">
@@ -112,13 +119,13 @@ const FlightCard = ({ flight, setIsModal }) => {
             </p>
             <p className="text-xs text-gray-500">per person</p>
           </div>
-          <Button
-            size="lg"
-            className="w-full bg-[#287094] text-white hover:bg-[#023246] transition-all duration-300"
-            onClick={() => handleSelectFlight(flight)}
-          >
-            Book Now
-          </Button>
+            <Button
+              size="md"
+              className="w-full bg-[#287094] text-white hover:bg-[#023246] transition-all duration-300"
+              onClick={() => handleSelectFlight(flight)}
+            >
+              Book Now
+            </Button>
         </div>
       </div>
 
@@ -127,9 +134,18 @@ const FlightCard = ({ flight, setIsModal }) => {
         onClose={handleCloseModal}
         flight={flight}
       />
+
+      {/* New Flight Details Modal */}
+      <FlightDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        flight={selectedFlight} // Change this from flight to selectedFlight
+        onBookNow={handleSelectFlight}
+      />
     </motion.div>
   );
 };
+
 
 // Search Form Component
 const SearchForm = ({ onSearch }) => {
@@ -324,3 +340,9 @@ const Flights = ({ setIsModal }) => {
 };
 
 export default Flights;
+
+
+
+
+
+
