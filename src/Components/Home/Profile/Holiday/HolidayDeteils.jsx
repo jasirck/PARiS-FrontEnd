@@ -217,7 +217,7 @@ const HolidayDetails = ({ isOpen, onClose, holidayId }) => {
           </p>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons
         <div className="flex justify-center pt-4 space-x-4">
           <button
             className="px-8 py-3 bg-[#942828] text-white rounded-lg hover:bg-opacity-90 transition duration-300"
@@ -228,7 +228,7 @@ const HolidayDetails = ({ isOpen, onClose, holidayId }) => {
           <button className="px-8 py-3 bg-[#023246] text-white rounded-lg hover:bg-opacity-90 transition duration-300 flex items-center">
             <Phone size={20} className="mr-2" /> Request Callback
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
