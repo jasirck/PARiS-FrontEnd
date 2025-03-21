@@ -18,7 +18,6 @@ import PaymentForm from "../../PaymentForm";
 import { useSelector } from "react-redux";
 import { toast } from 'sonner';
 
-
 const isAtLeast18YearsAgo = (date) => {
   const today = new Date();
   const birthDate = new Date(date);
@@ -50,18 +49,17 @@ const mealOptions = [
 ];
 
 const BookingModal = ({ isOpen, onClose, flight }) => {
-    const [showPayment, setShowPayment] = useState(false);
-    const [response, setResponse] = useState(null);
-    const token = useSelector((state) => state.auth.token);
-    const [flightData, setFlightData] = useState({
-        flight_number: '',
-        departure_city: '',
-        arrival_city: '',
-        departure_date: '',
-        arrival_date: '',
-        price: '',
-    });
-    console.log("flight", flight);
+  const [showPayment, setShowPayment] = useState(false);
+  const [response, setResponse] = useState(null);
+  const token = useSelector((state) => state.auth.token);
+  const [flightData, setFlightData] = useState({
+    flight_number: '',
+    departure_city: '',
+    arrival_city: '',
+    departure_date: '',
+    arrival_date: '',
+    price: '',
+  });
     
   const {
     control,
@@ -88,7 +86,6 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
     mode: "onBlur",
   });
   
-
   const formatDuration = (departureTime, arrivalTime) => {
     const departureDate = new Date(departureTime);
     const arrivalDate = new Date(arrivalTime);
@@ -97,31 +94,26 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
     const minutes = durationMinutes % 60;
     return { hours, minutes };
   };
-
   
   const duration = formatDuration(flight.departure.scheduled, flight.arrival.scheduled);
   const price = (duration.hours * 60 + duration.minutes) * 27 * 1.05;
+
   const handleConfirm = async (data) => {
-    console.log('flight', flight);
-    
     setFlightData({
-        
-        departure_city: flight.departure.airport,
-        arrival_city: flight.arrival.airport,
-        departure_date: flight.departure.scheduled,
-        arrival_date: flight.arrival.scheduled,
-        price: price,
-        flight_number: flight.flight.iata   
+      departure_city: flight.departure.airport,
+      arrival_city: flight.arrival.airport,
+      departure_date: flight.departure.scheduled,
+      arrival_date: flight.arrival.scheduled,
+      price: price,
+      flight_number: flight.flight.iata   
     });
-    console.log("data", data, 'flightData', flightData);
-    data = {data, flightData};
+    
+    const submitData = {data, flightData};
   
     try {
-
-      const response = await axios.post("/api/booked/flights/", data,{
+      const response = await axios.post("/api/booked/flights/", submitData, {
         headers: {Authorization: `Bearer ${token}`},
       }); 
-      console.log("response", response);
   
       if (response.status === 200 || response.status === 201) {
         setShowPayment(true);
@@ -129,17 +121,16 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
         reset();
         onClose();
       } else {
-        console.log("Unexpected response status:", response);
         reset();
         onClose();
         toast.error("Something went wrong. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Failed to book flight. Please try again.");
     }
   };
   
-
   const formatDateTime = (dateTimeString) => {
     return new Date(dateTimeString).toLocaleString('en-US', {
       dateStyle: 'medium',
@@ -147,52 +138,79 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
     });
   };
 
-    if (showPayment) {
-        return (
-          <Modal isOpen={showPayment} backdrop={blur} onClose={() => setShowPayment(false)} size="lg">
-            <ModalContent>
-              <ModalBody>
-                <PaymentForm
-                  amount={price}
-                  name={flight?.flight?.iata}
-                  booked_id={response?.data?.id}
-                  category={"flight"}
-                  onClose={() => setShowPayment(false)}
-                />
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-        );
-      }
-      
+  const formatPrice = (amount) => {
+    return `₹${Math.round(amount).toLocaleString('en-IN')}`;
+  };
+
+  const renderSection = (title) => (
+    <div className="col-span-2 mt-6 mb-2 border-b border-gray-200">
+      <h3 className="text-base sm:text-lg font-medium text-primary">{title}</h3>
+    </div>
+  );
+
+  if (showPayment) {
+    return (
+      <Modal isOpen={showPayment} backdrop="blur" onClose={() => setShowPayment(false)} size="lg">
+        <ModalContent>
+          <ModalBody>
+            <PaymentForm
+              amount={price}
+              name={flight?.flight?.iata}
+              booked_id={response?.data?.id}
+              category={"flight"}
+              onClose={() => setShowPayment(false)}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    );
+  }
 
   return (
     <Modal 
       isOpen={isOpen} 
       onClose={onClose}
-      size="2xl"
+      size={{sm: "full", md: "3xl"}}
       scrollBehavior="inside"
+      classNames={{
+        body: "p-4 sm:p-6",
+        header: "border-b border-gray-200 bg-gray-50",
+        footer: "border-t border-gray-200 bg-gray-50",
+        closeButton: "hover:bg-gray-200 active:bg-gray-300 rounded-full"
+      }}
     >
-      <ModalContent className="overflow-y-scroll">
+      <ModalContent className="overflow-y-auto">
         <form onSubmit={handleSubmit(handleConfirm)}>
-          <ModalHeader className="flex flex-col gap-1">
-            <h2 className="text-xl font-semibold">
-              Book Flight - {flight?.flight?.iata || 'N/A'}
-            </h2>
-            <p className="text-sm text-gray-500">
-              {flight?.departure?.iata || 'N/A'} → {flight?.arrival?.iata || 'N/A'} | {flight?.airline?.name || 'N/A'}
-            </p>
-            <p className="text-sm text-gray-500">
+          <ModalHeader className="flex flex-col gap-1 p-4 sm:p-6">
+            <div className="flex items-center justify-between w-full">
+              <div>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-primary">
+                  Book Flight {flight?.flight?.iata || 'N/A'}
+                </h2>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-1">
+                  <div className="flex items-center text-xs sm:text-sm font-medium">
+                    <span className="text-primary">{flight?.departure?.iata || 'N/A'}</span>
+                    <span className="mx-2">→</span>
+                    <span className="text-primary">{flight?.arrival?.iata || 'N/A'}</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    {flight?.airline?.name || 'N/A'}
+                  </p>
+                </div>
+              </div>
+              <div className="hidden sm:block">
+                <div className="text-base sm:text-lg md:text-xl font-bold text-primary">{formatPrice(price)}</div>
+                <div className="text-xxs sm:text-xs text-gray-500">Total fare</div>
+              </div>
+            </div>
+            <p className="text-xs sm:text-sm text-gray-600 mt-2">
               Departure: {formatDateTime(flight?.departure?.scheduled)}
             </p>
           </ModalHeader>
 
-          <ModalBody >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Personal Information Section */}
-              <div className="col-span-2">
-                <h3 className="text-lg font-medium mb-2">Personal Information</h3>
-              </div>
+          <ModalBody className="px-4 sm:px-6 py-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              {renderSection("Personal Information")}
 
               <Controller
                 name="firstName"
@@ -206,9 +224,18 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Input
                     {...field}
                     label="First Name"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.firstName}
                     errorMessage={errors.firstName?.message}
-                    placeholder="Enter first name"
+                    placeholder="first name"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -225,9 +252,18 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Input
                     {...field}
                     label="Last Name"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.lastName}
                     errorMessage={errors.lastName?.message}
-                    placeholder="Enter last name"
+                    placeholder="last name"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -247,9 +283,18 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                     {...field}
                     type="email"
                     label="Email"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.email}
                     errorMessage={errors.email?.message}
-                    placeholder="Enter email"
+                    placeholder="email"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -269,9 +314,18 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                     {...field}
                     type="tel"
                     label="Phone Number"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.phone}
                     errorMessage={errors.phone?.message}
-                    placeholder="Enter phone number"
+                    placeholder="phone number"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -288,8 +342,17 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                     {...field}
                     type="date"
                     label="Date of Birth"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.dateOfBirth}
                     errorMessage={errors.dateOfBirth?.message}
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -308,17 +371,23 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Input
                     {...field}
                     label="Nationality"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.nationality}
                     errorMessage={errors.nationality?.message}
-                    placeholder="Enter nationality"
+                    placeholder="nationality"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
 
-              {/* Passport Information Section */}
-              <div className="col-span-2">
-                <h3 className="text-lg font-medium mb-2">Passport Information</h3>
-              </div>
+              {renderSection("Passport Information")}
 
               <Controller
                 name="passportNumber"
@@ -334,9 +403,18 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Input
                     {...field}
                     label="Passport Number"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.passportNumber}
                     errorMessage={errors.passportNumber?.message}
-                    placeholder="Enter passport number"
+                    placeholder="passport number"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -353,8 +431,17 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                     {...field}
                     type="date"
                     label="Passport Expiry Date"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.passportExpiryDate}
                     errorMessage={errors.passportExpiryDate?.message}
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -373,17 +460,23 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Input
                     {...field}
                     label="Passport Issued Country"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.passportIssuedCountry}
                     errorMessage={errors.passportIssuedCountry?.message}
-                    placeholder="Enter issued country"
+                    placeholder="issued country"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
 
-              {/* Emergency Contact Section */}
-              <div className="col-span-2">
-                <h3 className="text-lg font-medium mb-2">Emergency Contact</h3>
-              </div>
+              {renderSection("Emergency Contact")}
 
               <Controller
                 name="emergencyContactName"
@@ -399,9 +492,18 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Input
                     {...field}
                     label="Emergency Contact Name"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.emergencyContactName}
                     errorMessage={errors.emergencyContactName?.message}
-                    placeholder="Enter emergency contact name"
+                    placeholder="emergency contact name"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
@@ -420,17 +522,23 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Input
                     {...field}
                     label="Emergency Contact Phone"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     isInvalid={!!errors.emergencyContactPhone}
                     errorMessage={errors.emergencyContactPhone?.message}
-                    placeholder="Enter emergency contact phone"
+                    placeholder="emergency contact phone"
+                    classNames={{
+                      inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      input: "text-xs sm:text-sm",
+                      errorMessage: "text-xs"
+                    }}
                   />
                 )}
               />
 
-              {/* Additional Information Section */}
-              <div className="col-span-2">
-                <h3 className="text-lg font-medium mb-2">Additional Information</h3>
-              </div>
+              {renderSection("Additional Information")}
 
               <Controller
                 name="mealPreference"
@@ -439,7 +547,16 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                   <Select
                     {...field}
                     label="Meal Preference"
+                    variant="bordered"
+                    labelPlacement="outside"
+                    radius="sm"
                     placeholder="Select meal preference"
+                    classNames={{
+                      trigger: "border-gray-300 hover:border-primary focus-within:border-primary data-[open=true]:border-primary h-14",
+                      label: "text-xs sm:text-sm font-medium text-gray-700",
+                      value: "text-xs sm:text-sm",
+                      listbox: "text-xs sm:text-sm"
+                    }}
                   >
                     {mealOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
@@ -458,13 +575,22 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                     <Textarea
                       {...field}
                       label="Special Requests"
+                      variant="bordered"
+                      labelPlacement="outside"
+                      radius="sm"
                       placeholder="Any special assistance or requests?"
+                      minRows={3}
+                      classNames={{
+                        inputWrapper: "border-gray-300 hover:border-primary focus-within:border-primary",
+                        label: "text-xs sm:text-sm font-medium text-gray-700",
+                        input: "text-xs sm:text-sm"
+                      }}
                     />
                   )}
                 />
               </div>
 
-              <div className="col-span-2">
+              <div className="col-span-2 mt-4">
                 <Controller
                   name="acceptTerms"
                   control={control}
@@ -472,17 +598,19 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
                     required: "You must accept the terms and conditions"
                   }}
                   render={({ field }) => (
-                    <div>
+                    <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
                       <Checkbox
                         {...field}
                         isSelected={field.value}
                         onValueChange={field.onChange}
                         isInvalid={!!errors.acceptTerms}
+                        color="primary"
+                        size="md"
                       >
-                        I accept the terms and conditions
+                        <span className="text-xs sm:text-sm">I accept the terms and conditions</span>
                       </Checkbox>
                       {errors.acceptTerms && (
-                        <p className="text-red-500 text-sm mt-1">{errors.acceptTerms.message}</p>
+                        <p className="text-red-500 text-xs mt-1">{errors.acceptTerms.message}</p>
                       )}
                     </div>
                   )}
@@ -491,23 +619,33 @@ const BookingModal = ({ isOpen, onClose, flight }) => {
             </div>
           </ModalBody>
 
-          <ModalFooter>
-            <Button
-              variant="bordered"
-              onPress={() => {
-                reset();
-                onClose();
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              isDisabled={isSubmitting}
-              color="primary"
-            >
-              {isSubmitting ? "Processing..." : `Confirm Booking (₹${price})`}
-            </Button>
+          <ModalFooter className="flex justify-between items-center px-4 sm:px-6 py-4 gap-4">
+            <div className="block sm:hidden">
+              <div className="text-base sm:text-lg font-bold text-primary">{formatPrice(price)}</div>
+              <div className="text-xxs sm:text-xs text-gray-500">Total fare</div>
+            </div>
+            <div className="flex gap-2 ml-auto">
+              <Button
+                variant="bordered"
+                radius="sm"
+                onPress={() => {
+                  reset();
+                  onClose();
+                }}
+                className="border-gray-300 text-gray-700 text-xs sm:text-sm"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                isDisabled={isSubmitting}
+                color="primary"
+                radius="sm"
+                className="font-medium text-xs sm:text-sm"
+              >
+                {isSubmitting ? "Processing..." : "Confirm Booking"}
+              </Button>
+            </div>
           </ModalFooter>
         </form>
       </ModalContent>
