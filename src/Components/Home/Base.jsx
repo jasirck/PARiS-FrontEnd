@@ -415,7 +415,7 @@ function Base() {
           <div className="flex items-center mt-2">
             <FaWhatsapp className="mr-2 text-lg text-green-400" />
             <a
-              href="https://wa.me/9207626627"
+              href="https://wa.me/9497714746"
               className="text-inherit hover:underline text-sm sm:text-base"
               target="_blank"
               rel="noopener noreferrer"
