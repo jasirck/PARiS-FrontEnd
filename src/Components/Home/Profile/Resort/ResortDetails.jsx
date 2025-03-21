@@ -379,7 +379,7 @@ export default function ResortDetailModal({
               Close
             </button>
             
-            {booked_id && (
+            {/* {booked_id && (
               <button
                 className="w-full sm:w-auto bg-[#942828] text-white px-6 py-3 rounded-full hover:opacity-90 transition-opacity font-medium flex items-center justify-center gap-2 order-1 sm:order-2"
                 onClick={handleCancelBooking}
@@ -387,15 +387,15 @@ export default function ResortDetailModal({
                 <X className="h-5 w-5" />
                 Cancel Booking
               </button>
-            )}
+            )} */}
             
-            <button
+            {/* <button
               className="w-full sm:w-auto bg-gradient-to-r from-[#287094] to-[#1e5674] text-white px-6 py-3 rounded-full hover:opacity-90 transition-opacity font-medium flex items-center justify-center gap-2 shadow-md order-3"
               onClick={() => alert("Callback request to be implemented")}
             >
               <Phone className="h-5 w-5" />
               Request Callback
-            </button>
+            </button> */}
           </motion.div>
         </div>
       </motion.div>
