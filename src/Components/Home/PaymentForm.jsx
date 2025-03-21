@@ -26,7 +26,7 @@ export default function PaymentForm({ amount, name,booked_id,category ,onClose})
   
       console.log("Creating checkout session...");
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/booked-checkout-session/",
+        "https://api.paristoursandtravels.in/api/booked-checkout-session/",
         { booked_id, amount, name,category },
         {
           headers: {

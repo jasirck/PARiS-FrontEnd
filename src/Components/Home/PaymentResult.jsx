@@ -82,7 +82,7 @@ export function PaymentSuccess() {
     if (sessionId) {
       axios
         .post(
-          "http://127.0.0.1:8000/api/confirm-payment/",
+          "https://api.paristoursandtravels.in/api/confirm-payment/",
           { session_id: sessionId },
           {
             headers: {
