@@ -247,7 +247,7 @@ function PackageBooking({ handletrackid }) {
                 {booking.conformed === "Requested" ? (
                   <div className="flex gap-2 flex-wrap">
                     <Button
-                      onClick={() => handleHolidayApproval(booking.id)}
+                      onClick={() =>{ handleHolidayApproval(booking.id); booking.conformed = "Approved"}}
                       color="success"
                       variant="flat"
                       className="flex-1"
@@ -255,7 +255,7 @@ function PackageBooking({ handletrackid }) {
                       Approve
                     </Button>
                     <Button
-                      onClick={() => handleHolidayDecline(booking.id)}
+                      onClick={() => {handleHolidayDecline(booking.id); booking.conformed = "Declined"}}
                       color="danger"
                       variant="flat"
                       className="flex-1"

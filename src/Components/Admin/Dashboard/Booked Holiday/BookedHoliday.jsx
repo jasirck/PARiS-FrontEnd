@@ -237,7 +237,7 @@ function HolidayBooking({ handletrackid }) {
                   {booking.conformed === "Requested" ? (
                     <>
                       <Button
-                        onClick={() => handleHolidayApproval(booking.id)}
+                        onClick={() => {handleHolidayApproval(booking.id);booking.conformed = "Approved"}}
                         color="success"
                         variant="flat"
                         fullWidth
@@ -245,7 +245,7 @@ function HolidayBooking({ handletrackid }) {
                         Approve
                       </Button>
                       <Button
-                        onClick={() => handleHolidayDecline(booking.id)}
+                        onClick={() =>{ handleHolidayDecline(booking.id);booking.conformed = "Declined"}}
                         color="danger"
                         variant="flat"
                         fullWidth

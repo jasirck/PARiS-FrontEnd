@@ -149,6 +149,7 @@ function Profile() {
       const response = await axios.put("api/profile/", updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      
   
       setUserData(response.data);
       setIsEditing(false);

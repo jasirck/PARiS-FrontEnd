@@ -85,7 +85,7 @@ function Holiday() {
     };
 
     fetchBookings();
-  }, [token, selectedBooking]);
+  }, [token, selectedBooking,showPayment]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -142,6 +142,7 @@ function Holiday() {
         name={selectedBooking.user_name}
         booked_id={selectedBooking.id}
         category={"package"}
+        onClose={() => setShowPayment(false)}
       />
     );
   }
@@ -153,7 +154,8 @@ function Holiday() {
           key={booking.id}
           className="bg-[#D4D4CE] rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl"
         >
-          <div className="p-4 md:p-6">
+          <div className="p-4 md:p-6" onClick={() => {handleSelectHoliday(booking); console.log("Selected holiday:", booking);}
+          }>
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
               {/* Left: Package Image */}
               <div className="w-full md:w-auto group">
@@ -209,12 +211,12 @@ function Holiday() {
                   <Button color="warning">Requested</Button>
                 ) : booking.conformed === "Confirmed" ? (
                   <div className="flex flex-col items-center">
-                    <Button
+                    {/* <Button
                       onPress={() => handleSelectHoliday(booking)}
                       color="success"
                     >
                       Details
-                    </Button>
+                    </Button> */}
                     <span className="text-sm text-[#023246] mt-2">
                       Starts in: {formatTime(countdowns[booking.id] || 0)}
                     </span>
@@ -226,9 +228,11 @@ function Holiday() {
                 ) : (
                   <Button
                     color="primary"
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation();
                       setSelectedBooking(booking);
                       setShowPayment(true);
+                      dispatch(setProfileHoliday(null));
                     }}
                   >
                     Pay Now

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../../utils/Api";
-import { Plane, User, Mail, CreditCard, Download } from "lucide-react";
+import { Plane, User, Mail, CreditCard, Download, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import TicketModal from "./TicketModal";
@@ -13,6 +13,7 @@ const BookedFlightDetails = () => {
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [countdowns, setCountdowns] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
@@ -48,6 +49,50 @@ const BookedFlightDetails = () => {
     fetchBookedFlights();
   }, [dispatch, profile_flight, token]);
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (bookedFlights.length === 0) return;
+
+    // Initialize countdowns
+    const initialCountdowns = {};
+    bookedFlights.forEach(booking => {
+      const departureTime = moment(booking.flight.departure_time);
+      initialCountdowns[booking.id] = calculateTimeRemaining(departureTime);
+    });
+    setCountdowns(initialCountdowns);
+
+    // Set up interval to update countdowns
+    const intervalId = setInterval(() => {
+      setCountdowns(prevCountdowns => {
+        const updatedCountdowns = {};
+        bookedFlights.forEach(booking => {
+          const departureTime = moment(booking.flight.departure_time);
+          updatedCountdowns[booking.id] = calculateTimeRemaining(departureTime);
+        });
+        return updatedCountdowns;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [bookedFlights]);
+
+  const calculateTimeRemaining = (departureTime) => {
+    const now = moment();
+    const diff = moment.duration(departureTime.diff(now));
+    
+    if (diff.asSeconds() <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true };
+    }
+    
+    return {
+      days: Math.floor(diff.asDays()),
+      hours: diff.hours(),
+      minutes: diff.minutes(),
+      seconds: diff.seconds(),
+      isPast: false
+    };
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Pending":        
@@ -57,6 +102,15 @@ const BookedFlightDetails = () => {
       default:
         return "bg-red-500 text-white";
     }
+  };
+
+  const getCountdownColor = (countdown) => {
+    if (countdown.isPast) return "text-red-500";
+    if (countdown.days === 0) {
+      if (countdown.hours < 3) return "text-red-500";
+      if (countdown.hours < 24) return "text-amber-500";
+    }
+    return "text-green-600";
   };
 
   const handleOpenModal = (ticket) => {
@@ -200,6 +254,23 @@ const BookedFlightDetails = () => {
                         <div className="text-[#287094] text-sm sm:text-base">
                           {moment(booking.flight.departure_time).format("h:mm A")}
                         </div>
+                        
+                        {/* Countdown Timer */}
+                        {countdowns[booking.id] && (
+                          <div className="mt-2 flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-[#287094]" />
+                            <div className={`text-sm font-medium ${getCountdownColor(countdowns[booking.id])}`}>
+                              {countdowns[booking.id].isPast ? (
+                                "Flight has departed"
+                              ) : (
+                                <>
+                                  {countdowns[booking.id].days > 0 && `${countdowns[booking.id].days}d `}
+                                  {countdowns[booking.id].hours}h {countdowns[booking.id].minutes}m {countdowns[booking.id].seconds}s
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       
                       {booking.conformed === "Confirmed" && (
