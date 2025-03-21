@@ -8,7 +8,6 @@ import moment from "moment";
 import { setProfileFlight } from "../../../Toolkit/Slice/apiHomeSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-
 const BookedFlightDetails = () => {
   const [bookedFlights, setBookedFlights] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +21,7 @@ const BookedFlightDetails = () => {
   useEffect(() => {
     const fetchBookedFlights = async () => {
       if (!profile_flight) {
-        setLoading(true); // Start loading before the API call
+        setLoading(true);
       
         axios
           .get("/api/booked/flights/", {
@@ -33,23 +32,10 @@ const BookedFlightDetails = () => {
             
             dispatch(setProfileFlight(response.data));
             setBookedFlights(response.data);
-      
-            // const initialCountdowns = {};
-            // response.data.forEach((booking) => {
-            //   if (booking.conformed === "Confirmed") {
-            //     const targetTime = new Date(booking.date).getTime();
-            //     const now = new Date().getTime();
-            //     const timeLeft = Math.max(0, targetTime - now); 
-            //     initialCountdowns[booking.id] = timeLeft;
-            //   }
-            // });
-      
-            // setCountdowns(initialCountdowns);
             setLoading(false); 
           })
           .catch((error) => {
             console.error("Error fetching Holiday:", error);
-            setError("Failed to fetch Holiday Requests.");
             toast.error("Failed to fetch Holiday requests");
             setLoading(false); 
           });
@@ -60,7 +46,7 @@ const BookedFlightDetails = () => {
     };
 
     fetchBookedFlights();
-  }, []);
+  }, [dispatch, profile_flight, token]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -94,6 +80,7 @@ const BookedFlightDetails = () => {
       await axios.post(`/api/booked/flights/cancel/${ticketId}/`);
       toast.success("Booking cancelled successfully");
       setBookedFlights((prev) => prev.filter((flight) => flight.id !== ticketId));
+      dispatch(setProfileFlight(bookedFlights.filter((flight) => flight.id !== ticketId)));
     } catch (error) {
       toast.error("Failed to cancel booking");
       console.error("Error cancelling booking:", error);
@@ -111,111 +98,135 @@ const BookedFlightDetails = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#287094]"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#287094]"></div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto max-w-4xl">
+    <div className="container mx-auto px-4 max-w-4xl">
       <div className="space-y-6">
         {bookedFlights.length === 0 ? (
-          <div className="bg-[#D4D4CE] rounded-xl shadow-2xl p-8 text-center">
-            <Plane className="w-16 h-16 mx-auto mb-4 text-[#023246]" />
-            <h3 className="text-xl font-semibold text-[#023246] mb-2">
+          <div className="bg-gradient-to-br from-[#D4D4CE] to-[#E5E5E1] rounded-xl shadow-2xl p-6 md:p-8 text-center">
+            <div className="bg-[#F6F6F6] rounded-full p-4 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+              <Plane className="w-12 h-12 mx-auto text-[#287094]" />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-[#023246] mb-3">
               No Bookings Found
             </h3>
-            <p className="text-[#023246] mb-6">
-              You haven't made any flight bookings yet.
+            <p className="text-sm sm:text-base text-[#023246] mb-6 max-w-md mx-auto">
+              You haven't made any flight bookings yet. Start planning your journey today!
             </p>
             <button
               onClick={() => navigate("/search-flights")}
-              className="bg-[#287094] text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors shadow-md"
+              className="bg-[#287094] text-white text-sm sm:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg hover:bg-[#1a5c7a] transition-colors shadow-md transform hover:scale-105 duration-200"
             >
               Book Your First Flight
             </button>
           </div>
         ) : (
-          bookedFlights.map((booking) => (
-            <div
-              key={booking.id}
-              className="bg-[#D4D4CE] rounded-xl shadow-2xl overflow-hidden transition-all duration-300 hover:shadow-xl"
-            >
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-semibold text-[#023246]">
-                    Booking #{booking.id}
-                  </h3>
-                  <span
-                    className={`px-4 py-2 rounded-full ${getStatusColor(
-                      booking.conformed
-                    )}`}
-                  >
-                    {booking.conformed}
-                  </span>
-                </div>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <Plane className="w-10 h-10 text-[#287094]" />
-                      <span className="text-[#023246] font-medium">Flight:</span>
-                      <span className="text-[#023246]">
-                        {booking.flight.flight_number}
-                      </span>
+          <div className="grid grid-cols-1 gap-6">
+            {bookedFlights.map((booking) => (
+              <div
+                key={booking.id}
+                className="bg-gradient-to-br from-[#D4D4CE] to-[#E5E5E1] rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl transform hover:translate-y-[-2px]"
+              >
+                <div className="p-4 md:p-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-[#287094] rounded-full p-2 flex items-center justify-center">
+                        <Plane className="w-5 h-5 text-white" />
+                      </div>
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#023246]">
+                        Booking #{booking.id}
+                      </h3>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <User className="w-5 h-5 text-[#287094]" />
-                      <span className="text-[#023246] font-medium">Passenger:</span>
-                      <span className="text-[#023246]">
-                        {booking.first_name} {booking.last_name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-[#287094]" />
-                      <span className="text-[#023246] font-medium">Email:</span>
-                      <span className="text-[#023246]">{booking.email}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CreditCard className="w-5 h-5 text-[#287094]" />
-                      <span className="text-[#023246] font-medium">Price:</span>
-                      <span className="text-[#023246]">
-                        ₹{booking.flight_price.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[#023246] font-medium">Flight Date:</span>
-                      <span className="text-[#023246]">
-                        {moment(booking.flight.departure_time).format(
-                          "MMMM Do YYYY, h:mm A"
-                        )}
-                      </span>
-                    </div>
+                    <span
+                      className={`text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full font-medium ${getStatusColor(
+                        booking.conformed
+                      )}`}
+                    >
+                      {booking.conformed}
+                    </span>
                   </div>
-                  <div className="flex flex-col justify-center gap-4 md:items-end">
-                    {booking.conformed === "Confirmed" && (
-                      <>
-                        <button
-                          className="flex items-center justify-center gap-2 bg-[#287094] text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors w-full md:w-auto"
-                          onClick={() => handleOpenModal(booking)}
-                        >
-                          <Download className="w-5 h-5" />
-                          View Ticket
-                        </button>
-                        {isCancelAllowed(booking.flight.departure_time) && (
+                  
+                  <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-3 bg-white bg-opacity-50 p-3 sm:p-4 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <Plane className="w-4 sm:w-5 h-4 sm:h-5 text-[#287094] mt-1 flex-shrink-0" />
+                        <div>
+                          <span className="text-[#023246] text-xs sm:text-sm font-medium block">Flight:</span>
+                          <span className="text-[#023246] text-sm sm:text-base md:text-lg">{booking.flight.flight_number}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3">
+                        <User className="w-4 sm:w-5 h-4 sm:h-5 text-[#287094] mt-1 flex-shrink-0" />
+                        <div>
+                          <span className="text-[#023246] text-xs sm:text-sm font-medium block">Passenger:</span>
+                          <span className="text-[#023246] text-sm sm:text-base">
+                            {booking.first_name} {booking.last_name}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3">
+                        <Mail className="w-4 sm:w-5 h-4 sm:h-5 text-[#287094] mt-1 flex-shrink-0" />
+                        <div>
+                          <span className="text-[#023246] text-xs sm:text-sm font-medium block">Email:</span>
+                          <span className="text-[#023246] text-sm sm:text-base break-words">{booking.email}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3">
+                        <CreditCard className="w-4 sm:w-5 h-4 sm:h-5 text-[#287094] mt-1 flex-shrink-0" />
+                        <div>
+                          <span className="text-[#023246] text-xs sm:text-sm font-medium block">Price:</span>
+                          <span className="text-[#023246] text-sm sm:text-base md:text-lg font-bold">
+                            ₹{booking.flight_price.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="bg-white bg-opacity-50 p-3 sm:p-4 rounded-lg">
+                        <div className="mb-1 sm:mb-2">
+                          <span className="text-[#023246] text-xs sm:text-sm font-medium">Flight Date:</span>
+                        </div>
+                        <div className="text-[#023246] text-sm sm:text-base md:text-lg font-bold">
+                          {moment(booking.flight.departure_time).format("MMM Do YYYY")}
+                        </div>
+                        <div className="text-[#287094] text-sm sm:text-base">
+                          {moment(booking.flight.departure_time).format("h:mm A")}
+                        </div>
+                      </div>
+                      
+                      {booking.conformed === "Confirmed" && (
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                           <button
-                            className="flex items-center justify-center gap-2 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors w-full md:w-auto"
-                            onClick={() => handleCancelBooking(booking.id)}
+                            className="flex items-center justify-center gap-2 bg-[#287094] text-white text-xs sm:text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg hover:bg-[#1a5c7a] transition-colors w-full sm:flex-1"
+                            onClick={() => handleOpenModal(booking)}
                           >
-                            Cancel Booking
+                            <Download className="w-4 sm:w-5 h-4 sm:h-5" />
+                            View Ticket
                           </button>
-                        )}
-                      </>
-                    )}
+                          {isCancelAllowed(booking.flight.departure_time) && (
+                            <button
+                              className="flex items-center justify-center gap-2 bg-red-500 text-white text-xs sm:text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg hover:bg-red-600 transition-colors w-full sm:flex-1"
+                              onClick={() => handleCancelBooking(booking.id)}
+                            >
+                              Cancel Booking
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
       <TicketModal
