@@ -46,7 +46,7 @@ const ToastNotification = ({ notification, onRemove }) => {
 
 const ToastNotificationContainer = () => {
   // WebSocket hook for connecting to the server
-  const { messages, connectionStatus } = useWebSocket('ws://127.0.0.1:8000/ws/notifications/');
+  const { messages, connectionStatus } = useWebSocket('wss://api.paristoursandtravels.in/ws/notifications/');
   
   // State for active toast notifications
   const [toasts, setToasts] = useState([]);
