@@ -152,7 +152,7 @@ function Visa() {
 
               {/* Right: Status Button */}
               <div className="w-full md:w-auto">
-                {booking.conformed === "Requested" ? (
+                {booking.conformed === "Approved" ? (
                   <Button onClick={() => {
                     setSelectedBooking(booking);
                     setShowPayment(true);
