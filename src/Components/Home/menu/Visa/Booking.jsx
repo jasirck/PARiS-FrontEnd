@@ -142,24 +142,24 @@ export default function VisaBookingModal({
         <div className="top-0 bg-white z-10">
           <button
             onClick={handleVisaModalClose}
-            className="w-[30%] lg:w-[15%] h-[15%] bg-[#4a4a48] text-[#fff] rounded-[19px] border-none flex justify-center items-center text-sm md:text-base"
+            className="w-[30%] lg:w-[15%] h-[15%] bg-[#4a4a48] text-[#fff] rounded-[19px] border-none flex justify-center items-center text-xs sm:text-sm md:text-base"
           >
             Cancel
           </button>
-          <h1 className="text-4xl font-extrabold flex justify-center items-center pb-4 text-[#4a4a48]">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold flex justify-center items-center pb-4 text-[#4a4a48]">
             Visa Booking - {visa?.name}
           </h1>
         </div>
 
         <div className="bg-[#fcfcfc] rounded-[15px] shadow-[0_0_09px_0_#000000] p-4 md:p-8">
           <div className="mb-4 p-2 md:p-5">
-            <label className="block text-sm md:text-[13.5px] font-medium text-[#787878] mb-1">
+            <label className="block text-xs sm:text-sm md:text-base font-medium text-[#787878] mb-1">
               Days Selected
             </label>
             <select
               value={selectedDays}
               onChange={handleDaysChange}
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base"
             >
               <option value="">Select a number of days</option>
               {visa?.visa_days?.map((visaDay) => (
@@ -173,14 +173,14 @@ export default function VisaBookingModal({
               ))}
             </select>
             {errors.days && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-xs sm:text-sm">
                 {errors.days?.message}
               </span>
             )}
           </div>
 
           <div className="mb-4 p-2 md:p-5">
-            <label className="block text-sm md:text-[13.5px] font-medium text-[#787878] mb-1">
+            <label className="block text-xs sm:text-sm md:text-base font-medium text-[#787878] mb-1">
               Passport Photo
             </label>
             <Controller
@@ -193,20 +193,20 @@ export default function VisaBookingModal({
                   type="file"
                   onChange={(e) => onChange(e.target.files)}
                   {...field}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base"
                   accept="image/jpeg,image/png,image/jpg"
                 />
               )}
             />
             {errors.passportPhoto && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-xs sm:text-sm">
                 {errors.passportPhoto?.message}
               </span>
             )}
           </div>
 
           <div className="mb-4 p-2 md:p-5">
-            <label className="block text-sm md:text-[13.5px] font-medium text-[#787878] mb-1">
+            <label className="block text-xs sm:text-sm md:text-base font-medium text-[#787878] mb-1">
               Personal Photo
             </label>
             <Controller
@@ -219,13 +219,13 @@ export default function VisaBookingModal({
                   type="file"
                   onChange={(e) => onChange(e.target.files)}
                   {...field}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base"
                   accept="image/jpeg,image/png,image/jpg"
                 />
               )}
             />
             {errors.personalPhoto && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-xs sm:text-sm">
                 {errors.personalPhoto?.message}
               </span>
             )}
@@ -235,7 +235,7 @@ export default function VisaBookingModal({
             <button
               onClick={handleSubmit(onSubmit)}
               disabled={!selectedDays || !selectedPrice}
-              className="w-full max-w-[70%] md:max-w-[40%] h-8 bg-[#4a4a48] text-[#e2e2e2] rounded-[19px] border-none text-sm md:text-base disabled:opacity-50"
+              className="w-full max-w-[70%] md:max-w-[40%] h-8 bg-[#4a4a48] text-[#e2e2e2] rounded-[19px] border-none text-xs sm:text-sm md:text-base disabled:opacity-50"
             >
               Conform Apply
               {/* Pay{" "}
