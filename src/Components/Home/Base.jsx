@@ -91,7 +91,7 @@ function Base() {
 
   const navItems = [
     { name: "Home", path: "/home" },
-    { name: "Holidays", path: "/home/holiday" },
+    { name: "School/College", path: "/home/holiday" },
     { name: "Packages", path: "/home/packages" },
     { name: "Resorts", path: "/home/resort" },
     { name: "Flights", path: "/home/flights" },
