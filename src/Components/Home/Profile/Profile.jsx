@@ -198,10 +198,10 @@ function Profile() {
     setImageFile(null);
     setFormErrors({});
     setImagePreview(
-      userData.user_image 
-        ? userData.user_image.includes("lh3.googleusercontent.com/a/") 
-          ? userData.user_image 
-          : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${userData.user_image}` 
+      profile 
+        ? profile.includes("lh3.googleusercontent.com/a/") 
+          ? profile 
+          : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${profile}` 
         : "/user_image_demo.png"
     );
     setIsEditing(false);
