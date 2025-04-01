@@ -31,7 +31,7 @@ function Profile() {
   const [imagePreview, setImagePreview] = useState("");
   const [formErrors, setFormErrors] = useState({});
 
-  const token = useSelector((state) => state.auth.token);
+  const {token,profile} = useSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -56,11 +56,11 @@ function Profile() {
           email: data.email,
         });
         
-        // Handle image preview based on source
+        
         setImagePreview(
-          data.user_image 
-            ? data.user_image.includes("lh3.googleusercontent.com/a/") 
-              ? data.user_image 
+          profile
+            ? profile.includes("lh3.googleusercontent.com/a/") 
+              ? profile
               : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${data.user_image}` 
             : "/user_image_demo.png"
         );

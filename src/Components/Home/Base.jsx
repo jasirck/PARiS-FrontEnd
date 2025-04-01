@@ -1,9 +1,7 @@
-
-
 import React, { useEffect, useState, useRef } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import { useNavigate, useLocation, Routes, Route } from "react-router-dom";
-import {  useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Toolkit/Slice/authSlice";
 import Home from "./menu/Home";
 import Packages from "./menu/Package/Packages";
@@ -19,7 +17,7 @@ import Flights from "./menu/Flights/Flights";
 import Visa from "./menu/Visa/Visa";
 import VisaNotificationComponent from "../VisaNotificationComponent";
 import { IoChatbubblesSharp } from "react-icons/io5";
-import {  FaWhatsapp } from "react-icons/fa";
+import { FaPhone, FaWhatsapp } from "react-icons/fa";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import UserChat from "../Chat";
 
@@ -33,10 +31,9 @@ function Base() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  
+
   const { user, profile, token } = useSelector((state) => state.auth);
   const isActive = (path) => location.pathname === path;
-  
   const menuRef = useRef(null);
   const searchInputRef = useRef(null);
 
@@ -53,7 +50,7 @@ function Base() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuRef]);
-  
+
   // Handle responsive behavior on window resize
   useEffect(() => {
     const handleResize = () => {
@@ -62,9 +59,9 @@ function Base() {
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -83,7 +80,7 @@ function Base() {
     navigate(path);
     setMobileMenu(false);
   };
-  
+
   const handleLogout = () => {
     dispatch(logout());
     navigate("/home");
@@ -91,11 +88,11 @@ function Base() {
 
   const navItems = [
     { name: "Home", path: "/home" },
-    { name: "Holidays", path: "/home/holiday" },
     { name: "Packages", path: "/home/packages" },
+    { name: "College Holidays", path: "/home/holiday" },
     { name: "Resorts", path: "/home/resort" },
     { name: "Flights", path: "/home/flights" },
-    { name: "Visa", path: "/home/visa" }
+    { name: "Visa", path: "/home/visa" },
   ];
 
   return (
@@ -111,19 +108,20 @@ function Base() {
             style={{ cursor: "pointer" }}
           />
         </section>
-        
+
         {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden text-gray-700 z-20" 
+        <button
+          className="md:hidden text-gray-700 z-20"
           onClick={() => setMobileMenu(!mobileMenu)}
           aria-label="Toggle menu"
         >
-          {mobileMenu ? 
-            <RiCloseLine className="text-3xl" /> : 
+          {mobileMenu ? (
+            <RiCloseLine className="text-3xl" />
+          ) : (
             <RiMenu3Line className="text-3xl" />
-          }
+          )}
         </button>
-        
+
         {/* Desktop User Section */}
         <section className="hidden md:block ml-auto">
           {token ? (
@@ -131,7 +129,13 @@ function Base() {
               <div className="relative group">
                 <img
                   onClick={() => navigate("/profile")}
-                  src={profile ? (profile.includes("lh3.googleusercontent.com/a/")) ? profile : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${profile}` : "/user_image_demo.png"}
+                  src={
+                    profile
+                      ? profile.includes("lh3.googleusercontent.com/a/")
+                        ? profile
+                        : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${profile}`
+                      : "/user_image_demo.png"
+                  }
                   alt="User Profile"
                   className="w-10 h-10 rounded-full object-cover cursor-pointer border-2 border-[#287094] transition-transform hover:scale-105"
                 />
@@ -164,7 +168,7 @@ function Base() {
 
       {/* Mobile Menu */}
       {mobileMenu && (
-        <div 
+        <div
           ref={menuRef}
           className="fixed inset-0 bg-white z-10 pt-20 px-4 md:hidden"
         >
@@ -180,18 +184,26 @@ function Base() {
                 {item.name}
               </button>
             ))}
-            
+
             {/* Mobile User Actions */}
             <div className="mt-6 pt-6 border-t border-gray-200">
               {token ? (
                 <div className="flex flex-col space-y-4">
                   <div className="flex items-center space-x-3">
                     <img
-                      src={profile ? (profile.includes("lh3.googleusercontent.com/a/")) ? profile : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${profile}` : "/user_image_demo.png"}
+                      src={
+                        profile
+                          ? profile.includes("lh3.googleusercontent.com/a/")
+                            ? profile
+                            : `https://res.cloudinary.com/dkqfxe7qy/image/upload/v1733819010/${profile}`
+                          : "/user_image_demo.png"
+                      }
                       alt="User Profile"
                       className="w-10 h-10 rounded-full object-cover border-2 border-[#287094]"
                     />
-                    <span className="text-gray-700 font-medium">{user || "User"}</span>
+                    <span className="text-gray-700 font-medium">
+                      {user || "User"}
+                    </span>
                   </div>
                   <button
                     onClick={() => {
@@ -240,11 +252,17 @@ function Base() {
           />
         </div>
         <div className="absolute top-1/2 left-[8%] sm:left-[13%] transform -translate-y-1/2 text-white pl-2 sm:pl-4">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-shadow">Stay</h1>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-shadow">Somewhere</h1>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-shadow">Unforgattable</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-shadow">
+            Stay
+          </h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-shadow">
+            Somewhere
+          </h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-shadow">
+            Unforgattable
+          </h1>
         </div>
-        
+
         {/* Search Bar */}
         {/* <form 
           onSubmit={handleSearch}
@@ -299,14 +317,26 @@ function Base() {
         <Routes>
           <Route index element={<Home setIsModal={setIsModal} />} />
           <Route path="home" element={<Home setIsModal={setIsModal} />} />
-          <Route path="home/holiday" element={<Holiday setIsModal={setIsModal} />} />
-          <Route path="home/packages" element={<Packages setIsModal={setIsModal} />} />
-          <Route path="home/resort" element={<Resort setIsModal={setIsModal} />} />
-          <Route path="home/flights" element={<Flights setIsModal={setIsModal} />} />
+          <Route
+            path="home/holiday"
+            element={<Holiday setIsModal={setIsModal} />}
+          />
+          <Route
+            path="home/packages"
+            element={<Packages setIsModal={setIsModal} />}
+          />
+          <Route
+            path="home/resort"
+            element={<Resort setIsModal={setIsModal} />}
+          />
+          <Route
+            path="home/flights"
+            element={<Flights setIsModal={setIsModal} />}
+          />
           <Route path="home/visa" element={<Visa setIsModal={setIsModal} />} />
         </Routes>
       </div>
-      
+
       {/* Chatbot Icon */}
       <div
         className="fixed bottom-6 right-6 bg-[#287094] text-white p-3 sm:p-4 rounded-full shadow-lg cursor-pointer hover:bg-[#1e5674] transition-transform hover:scale-105 z-10"
@@ -315,126 +345,154 @@ function Base() {
       >
         <IoChatbubblesSharp className="text-xl sm:text-2xl" />
       </div>
-      
+
       {/* Chat Component */}
       {chat && <UserChat onClose={() => setChat(false)} />}
 
-      {/* Footer Section
       <footer className="bg-[#1E546F] text-white w-11/12 mx-auto pb-6 sm:pb-8 p-6 sm:p-8 rounded-3xl my-8 sm:my-12 mt-auto">
-        <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-8">
-          <div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-              PARiS Tours & Travels
-            </h2>
-            <p className="mb-2 text-sm sm:text-base">
-              Near Kotak Mahindra Bank, Nut Street, Vatakara, Calicut, 673104
-            </p>
-            <p className="text-sm sm:text-base">Near Mahe, Azhiyur Chungam, 673309</p>
-          </div>
-          <div>
-            <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Contact</h3>
-            <p className="mb-2 text-sm sm:text-base">Phone: 9207626627</p>
-            <p className="mb-2 text-sm sm:text-base">Phone: 9497714746</p>
-            <p className="mb-2 text-sm sm:text-base">Phone: 7306868537, 8606563820</p>
+        <div className="flex justify-center">
+          <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-8 max-w-6xl w-full">
+            {/* Vatakara Branch */}
+            <div className="w-full md:w-1/2 space-y-2">
+              <h3 className="text-md sm:text-lg font-semibold mb-2">
+                Vatakara Branch
+              </h3>
+              <p className="mb-2 text-sm sm:text-base">
+                Near Kotak Mahindra Bank, Nut Street, Vatakara, Calicut, 673104
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-sm sm:text-base">
+                  <FaPhone className="mr-2" />
+                  <a
+                    href="tel:9207626627"
+                    className="hover:underline flex items-center"
+                  >
+                    9207626627
+                  </a>
+                </div>
+                <div className="flex items-center space-x-2 text-sm sm:text-base">
+                  <FaPhone className="mr-2" />
+                  <a
+                    href="tel:9497714746"
+                    className="hover:underline flex items-center"
+                  >
+                    9497714746
+                  </a>
+                </div>
 
-            <div className="mt-4 flex items-center">
-              <HiMail className="mr-2 text-lg" />
-              <a
-                href="mailto:paristourstravels@gmail.com"
-                className="text-inherit hover:underline text-sm sm:text-base"
-              >
-                paristourstravels@gmail.com
-              </a>
+                {/* Email */}
+                <div className="flex items-center mt-2 space-x-2">
+                  <HiMail className="mr-2 text-lg" />
+                  <a
+                    href="mailto:paristourstravels@gmail.com"
+                    className="text-inherit hover:underline text-sm sm:text-base"
+                  >
+                    paristourstravels@gmail.com
+                  </a>
+                </div>
+
+                {/* Instagram */}
+                <div className="flex items-center mt-2 space-x-2">
+                  <FaSquareInstagram className="mr-2 text-lg" />
+                  <a
+                    href="https://www.instagram.com/paris_tours_travels"
+                    className="text-inherit hover:underline text-sm sm:text-base"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @paris_tours_travels
+                  </a>
+                </div>
+
+                {/* WhatsApp */}
+                <div className="flex items-center mt-2 space-x-2">
+                  <FaWhatsapp className="mr-2 text-lg text-green-400" />
+                  <a
+                    href="https://wa.me/9497714746"
+                    className="text-inherit hover:underline text-sm sm:text-base"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    9497714746
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center mt-2">
-              <FaSquareInstagram className="mr-2 text-lg" />
-              <a
-                href="https://www.instagram.com/paris_tours_travels"
-                className="text-inherit hover:underline text-sm sm:text-base"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                @paris_tours_travels
-              </a>
+            {/* Azhiyur Branch */}
+            <div className="w-full md:w-1/2 space-y-2">
+              <h3 className="text-md sm:text-lg font-semibold mb-2">
+                Azhiyur Branch
+              </h3>
+              <p className="mb-2 text-sm sm:text-base">
+                Near Mahe, Azhiyur Chungam, 673309
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-sm sm:text-base">
+                  <FaPhone className="mr-2" />
+                  <a
+                    href="tel:7306868537"
+                    className="hover:underline flex items-center"
+                  >
+                    7306868537
+                  </a>
+                </div>
+                <div className="flex items-center space-x-2 text-sm sm:text-base">
+                  <FaPhone className="mr-2" />
+                  <a
+                    href="tel:8606563820"
+                    className="hover:underline flex items-center"
+                  >
+                    8606563820
+                  </a>
+                </div>
+
+                {/* Email */}
+                <div className="flex items-center mt-2 space-x-2">
+                  <HiMail className="mr-2 text-lg" />
+                  <a
+                    href="mailto:paristourstravels@gmail.com"
+                    className="text-inherit hover:underline text-sm sm:text-base"
+                  >
+                    paristourstravels@gmail.com
+                  </a>
+                </div>
+
+                {/* Instagram */}
+                <div className="flex items-center mt-2 space-x-2">
+                  <FaSquareInstagram className="mr-2 text-lg" />
+                  <a
+                    href="https://www.instagram.com/paris_tours_travels"
+                    className="text-inherit hover:underline text-sm sm:text-base"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    @paris_tours_travels
+                  </a>
+                </div>
+
+                {/* WhatsApp */}
+                <div className="flex items-center mt-2 space-x-2">
+                  <FaWhatsapp className="mr-2 text-lg text-green-400" />
+                  <a
+                    href="https://wa.me/7306868537"
+                    className="text-inherit hover:underline text-sm sm:text-base"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    7306868537
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Copyright */}
         <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm">
           © 2024 PARiS Tours & Travels. All rights reserved.
         </div>
-      </footer>*/}
-
-
-
-<footer className="bg-[#1E546F] text-white w-11/12 mx-auto pb-6 sm:pb-8 p-6 sm:p-8 rounded-3xl my-8 sm:my-12 mt-auto">
-      <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-8">
-        {/* Company Info */}
-        <div>
-          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-            PARiS Tours & Travels
-          </h2>
-          <p className="mb-2 text-sm sm:text-base">
-            Near Kotak Mahindra Bank, Nut Street, Vatakara, Calicut, 673104
-          </p>
-          <p className="text-sm sm:text-base">Near Mahe, Azhiyur Chungam, 673309</p>
-        </div>
-
-        {/* Contact Section */}
-        <div>
-          <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Contact</h3>
-          <p className="mb-2 text-sm sm:text-base">Phone: 9207626627</p>
-          <p className="mb-2 text-sm sm:text-base">Phone: 9497714746</p>
-          <p className="mb-2 text-sm sm:text-base">Phone: 7306868537, 8606563820</p>
-
-          {/* Email */}
-          <div className="mt-4 flex items-center">
-            <HiMail className="mr-2 text-lg" />
-            <a
-              href="mailto:paristourstravels@gmail.com"
-              className="text-inherit hover:underline text-sm sm:text-base"
-            >
-              paristourstravels@gmail.com
-            </a>
-          </div>
-
-          {/* Instagram */}
-          <div className="flex items-center mt-2">
-            <FaSquareInstagram className="mr-2 text-lg" />
-            <a
-              href="https://www.instagram.com/paris_tours_travels"
-              className="text-inherit hover:underline text-sm sm:text-base"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              @paris_tours_travels
-            </a>
-          </div>
-
-          {/* WhatsApp */}
-          <div className="flex items-center mt-2">
-            <FaWhatsapp className="mr-2 text-lg text-green-400" />
-            <a
-              href="https://wa.me/9497714746"
-              className="text-inherit hover:underline text-sm sm:text-base"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              9497714746
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Copyright */}
-      <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm">
-        © 2024 PARiS Tours & Travels. All rights reserved.
-      </div>
-    </footer>
-
-
-
-
+      </footer>
 
       {/* Modals */}
       {isModal.length > 0 && (
