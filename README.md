@@ -1,6 +1,6 @@
-# PARiS Travel Agency - Frontend
+# PARiS Tours and Travels - Frontend
 
-Welcome to the **PARiS Travel Agency** frontend repository! This is the React-based client side of the PARiS Travel booking platform, providing users with an interactive and seamless experience to explore and book holidays, resorts, flights, and more.
+Welcome to the **PARiS Tours and Travels** frontend repository! This is the React-based client side of the PARiS Travel booking platform, providing users with an interactive and seamless experience to explore and book holidays, resorts, flights, and more.
 
 ## 🌍 Live Demo
 
@@ -29,7 +29,9 @@ Welcome to the **PARiS Travel Agency** frontend repository! This is the React-ba
 - **Redux Toolkit** (for state management)
 - **Tailwind CSS** (for styling)
 - **Socket.IO Client** (real-time messaging)
+- **Cloudinary for media upload
 - **Axios** (for API requests)
+- ** Payment Integration Support (Stripe)
 - **React Icons** (for iconography)
 
 ---
